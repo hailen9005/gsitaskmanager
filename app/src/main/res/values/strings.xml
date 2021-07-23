@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">GSI Task Manager</string>
+    <string name="add_a_new_task">Add a new task</string>
+    <string name="assign">Assign</string>
+    <string name="tittle">Task Tittle</string>
+    <string name="unknown">unknown</string>
+    <string name="description">Description</string>
+    <string name="type">Type</string>
+    <string name="date">Date</string>
+    <string name="defaultDate">10 de january de 1970  10:05 pm</string>
+    <string name="project">Project</string>
+    <string name="inbox">Inbox</string>
+    <string name="info_provide_their_role">To begin you should select their role</string>
+    <string name="manager">Manager</string>
+    <string name="manager_team">Team Manager</string>
+    <string name="member_team">Team Member</string>
+    <string name="add_profile">Add Profile</string>
+    <string name="name">Name</string>
+    <string name="name_last">Name and Last Name</string>
+    <string name="add">Add</string>
+    <string name="occupation">Occupation</string>
+    <string name="home">Home</string>
+    <string name="listAll">All</string>
+    <string name="completed">Completed</string>
+    <string name="noCompleted">Incomplete</string>
+</resources>
