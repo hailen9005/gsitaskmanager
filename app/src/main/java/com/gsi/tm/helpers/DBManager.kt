@@ -1,5 +1,8 @@
 /*
- * Copyright (c) 2021. Esta aplicacion ha sido desarollada bajo el intelecto de Hailen Baez Diaz la cual tiene caracter comercial puesto que usted debe pagar una cuota monetaria pra su uso
+ * Copyright (c) Desarrollado por Hailen Baez,
+ */
+
+/**desarollado por Hailen Baez
  */
 
 package com.gsi.tm.helpers
@@ -10,11 +13,10 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import com.gsi.tm.enums.StateSend
-import com.gsi.tm.models.GSITaskDescription
-import com.gsi.tm.models.Person
-import com.gsi.tm.models.OperationTaskStatus
 import com.gsi.tm.helpers.App.getDBPath
-import java.lang.Exception
+import com.gsi.tm.models.GSITaskDescription
+import com.gsi.tm.models.OperationTaskStatus
+import com.gsi.tm.models.Person
 
 class DBManager(context: Context) : SQLiteOpenHelper(context, context.getDBPath(), null, 1) {
     val TAB_PERSON: String = "person"

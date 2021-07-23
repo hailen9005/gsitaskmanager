@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Desarrollado por Hailen Baez,
+ */
+
 package com.gsi.tm
 
 import android.content.Intent
