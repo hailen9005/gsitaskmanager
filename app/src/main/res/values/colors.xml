@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#2094AD</color>
+    <color name="colorPrimaryTransparent">#402094AD</color>
     <color name="colorPrimaryDark">#00949D</color>
     <color name="colorAccent">#03DAC5</color>
     <color name="colorWhite">#ffffff</color>
+    <color name="colorOpenState">#e8ff15</color>
+    <color name="colorInProgessState">#ffa115</color>
+    <color name="colorClosedState">#07ff3d</color>
+    <color name="colorOffTimeState">#ff2c15</color>
+    <color name="colorOffUndefinedState">#DADADA</color>
+    <color name="shadow_end_color">#40000000</color>
+    <color name="popud_bg1">#f4f4f4</color>
 </resources>

@@ -1,6 +1,7 @@
 package com.gsi.tm.helpers
 
 import android.util.Log
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -10,35 +11,17 @@ import org.json.JSONObject
 class FMService : FirebaseMessagingService() {
 
     val TAG = "FM-GSI"
-    val topic = App.TOPIC
 
     override fun onCreate() {
         super.onCreate()
-
-        subscribe()
-
-        val strJSON = contructMessage("sampletask", "any content")
-
-        Thread(Runnable {
-            WebConnect.connect(strJSON)
-        }).start()
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        //com.google.firebase.messaging.RemoteMessage()
 
-        unsubscribe()
     }
 
-    fun contructMessage(tasktitle: String, taskcontent: String): String {
-        val body = JSONObject()
-        val data = JSONObject()
-        data.put("title", tasktitle)
-        data.put("content", taskcontent)
-        body.put("data", data)
-        body.put("to", "/topics/$topic")
-        return body.toString()
-    }
 
 
     override fun onNewToken(p0: String) {
@@ -62,9 +45,12 @@ class FMService : FirebaseMessagingService() {
                 //  handleNow()
             }
 
+            val messageId = remoteMessage.messageId
+            val senderId = remoteMessage.senderId
             val title = remoteMessage.data["title"]
             val content = remoteMessage.data["content"]
-            Log.d(TAG, "$title $content")
+            val idDev = remoteMessage.data["registration_ids"]
+            Log.d(TAG, "onMessageReceived: $title $content $idDev  $senderId : $messageId ")
         }
 
         // Check if message contains a notification payload.
@@ -76,27 +62,7 @@ class FMService : FirebaseMessagingService() {
         // message, here is where that should be initiated. See sendNotification method below.
     }
 
-    fun subscribe() {
-        FirebaseMessaging.getInstance().subscribeToTopic(topic).addOnSuccessListener {
-            Log.d(TAG, "task subscription")
-        }
-        FirebaseMessaging.getInstance().subscribeToTopic("topic")
-            .addOnCompleteListener { task ->
-                var msg = " addOnCompleteListener ok"
-                if (!task.isSuccessful) {
-                    msg = "addOnCompleteListener failed  "
-                }
-                Log.d(TAG, msg)
 
-            }
-    }
-
-    fun unsubscribe() {
-        FirebaseMessaging.getInstance().unsubscribeFromTopic(topic).addOnSuccessListener {
-            Log.d(TAG, "task subscription")
-        }
-
-    }
 
 
 }

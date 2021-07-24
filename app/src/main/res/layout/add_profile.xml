@@ -12,6 +12,7 @@
         android:layout_marginBottom="100dp"
         android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -31,7 +32,6 @@
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_marginTop="25dp"
-            android:background="@drawable/draw_profile"
             android:src="@drawable/ic_baseline_person_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -39,22 +39,35 @@
             app:layout_constraintTop_toBottomOf="@+id/textView3"
             app:layout_constraintVertical_bias="0.0" />
 
+        <TextView
+            android:id="@+id/tv_tp_profile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/type_profile"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imv_profile_add"
+            app:layout_constraintVertical_bias="0.0" />
+
         <LinearLayout
             android:id="@+id/row1"
             style="@style/rowStyle"
-            android:layout_marginTop="25dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imv_profile_add"
+            app:layout_constraintTop_toBottomOf="@+id/tv_tp_profile"
             app:layout_constraintVertical_bias="0.0">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="@string/name_last" />
+                android:text="@string/name_last"
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/edt_name"
@@ -63,7 +76,7 @@
                 android:layout_marginTop="5dp"
                 android:background="@drawable/draw_edt_form"
                 android:ems="10"
-                android:inputType="text"
+                android:inputType="textPersonName"
                 android:padding="5dp"
                 android:textColor="@color/colorPrimary" />
 
@@ -84,15 +97,47 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="@string/occupation" />
+                android:text="@string/occupation"
+                android:textStyle="bold" />
 
             <Spinner
-                android:id="@+id/spin_task_type"
+                android:id="@+id/spin_occupation_type"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:entries="@array/occupation"
                 android:padding="5dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/row3"
+            style="@style/rowStyle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/row2"
+            app:layout_constraintVertical_bias="0.0">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="@string/space_id"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/edt_space"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/draw_edt_form"
+                android:ems="10"
+                android:hint="alpha_space123"
+                android:inputType="text"
+                android:padding="5dp"
+                android:textColor="@color/colorPrimary" />
+
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -109,12 +154,22 @@
             android:id="@+id/btn_add_profile"
             style="@style/btn_style1"
             android:layout_marginEnd="15dp"
-            android:background="@drawable/state_draw_btn1"
             android:gravity="center"
             android:text="@string/add"
-            android:textColor="@color/state_color_btn1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/btn_cancel_profile"
+            style="@style/btn_style1"
+            android:layout_marginEnd="15dp"
+            android:gravity="center"
+            android:text="@string/cancel"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_add_profile"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

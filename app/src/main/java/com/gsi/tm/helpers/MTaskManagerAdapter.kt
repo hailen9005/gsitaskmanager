@@ -1,44 +1,30 @@
 package com.gsi.tm.helpers
 
-import android.app.ActivityManager
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Point
 import android.util.Log
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
-import com.gsi.tm.R
-import com.gsi.tm.models.GSITaskDescription
+import com.gsi.tm.interfaces.IOnItemAdapter
 import java.io.File
-import java.io.FileReader
-import java.lang.Exception
 import kotlin.properties.Delegates
 
-class MTaskManagerAdapter(val layoutInflater: LayoutInflater, val context: Context) :
-    RecyclerView.Adapter<MTaskManagerAdapter.MviewHolder>() {
-
-    var listTask = arrayListOf<GSITaskDescription>()
-
-    init {
-
-        listTask = App.getManagerDB(context)?.getListTasks() ?: arrayListOf()
-    }
-
+class MTaskManagerAdapter<T>(
+    val layoutInflater: LayoutInflater,
+    val context: Context,
+    val listTask: ArrayList<T> = arrayListOf(),
+    val resId: Int,
+    var listener: IOnItemAdapter? = null
+) :
+    RecyclerView.Adapter<MTaskManagerAdapter<T>.MviewHolder>() {
 
     inner class MviewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        var imvS: ImageView? = null
-
-        var currentPosition by Delegates.observable(0) { property, oldValue, newValue ->
-            //     Log.e("positio" , " "+oldValue+ " : " + newValue)
-            //   handler.post { createView(this, adapterPosition) }
-        }
-
+        var imvProfile: ImageView? = null
+        var currentPosition by Delegates.observable(0) { property, oldValue, newValue -> }
         var task: Any?/* ImageLoader? */ = null
 
         /**
@@ -68,10 +54,8 @@ class MTaskManagerAdapter(val layoutInflater: LayoutInflater, val context: Conte
                 " " + position + " : " + this.currentPosition + " :" + this.position
             )
 
-
-            //     CreateTaskImageLoader( , 0, null, imvS!!)
-
-
+            listener?.constructView(listTask[position], this.itemView)
+            //     CreateTaskImageLoader( , 0, null, imvProfile)
             return null
         }
 
@@ -82,20 +66,18 @@ class MTaskManagerAdapter(val layoutInflater: LayoutInflater, val context: Conte
     override fun onViewRecycled(holder: MviewHolder) {
         super.onViewRecycled(holder)
         //bitmap.recycled
-        holder.itemView.findViewById<ImageView>(R.id.imv_profile_item_task).setImageBitmap(null)
+        //holder.itemView.findViewById<ImageView>(R.id.imv_profile_item_task).setImageBitmap(null)
     }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MviewHolder {
-        val viewH = layoutInflater.inflate(R.layout.item_task, null)
+        val viewH = layoutInflater.inflate(resId, null)
         viewH.layoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
 
         val holder = MviewHolder(viewH)
-        // holder.createView(holder)
-
         return holder
     }
 
@@ -107,7 +89,7 @@ class MTaskManagerAdapter(val layoutInflater: LayoutInflater, val context: Conte
         super.onViewDetachedFromWindow(holder)
         Log.e("*", "onViewDetachedFromWindow" + holder.adapterPosition)
         holder.cancelTasks()
-        holder.itemView.findViewById<ImageView>(R.id.imv_profile_item_task).setImageBitmap(null)
+        listener?.detachedFromWindow(holder.itemView)
     }
 
 
@@ -123,9 +105,6 @@ class MTaskManagerAdapter(val layoutInflater: LayoutInflater, val context: Conte
         // resetView(view, imv)
         //holder.createView()
     }
-
-
-    var popudHtml: PopupWindow? = null
 
     private fun resetView(deviceview: View, imv: ImageView) {
         imv.setImageBitmap(null)

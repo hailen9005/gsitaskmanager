@@ -12,11 +12,13 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
-import com.gsi.tm.enums.StateSend
+import com.gsi.tm.enums.SendState
 import com.gsi.tm.helpers.App.getDBPath
 import com.gsi.tm.models.GSITaskDescription
+import com.gsi.tm.models.MOption
 import com.gsi.tm.models.OperationTaskStatus
 import com.gsi.tm.models.Person
+import java.lang.StringBuilder
 
 class DBManager(context: Context) : SQLiteOpenHelper(context, context.getDBPath(), null, 1) {
     val TAB_PERSON: String = "person"
@@ -24,13 +26,13 @@ class DBManager(context: Context) : SQLiteOpenHelper(context, context.getDBPath(
     val TAB_TASK_STATUS: String = "operationTaskStatus"
 
     private val CREATE_TABLE_PERSON: String =
-        "Create table if not exists $TAB_PERSON ( id INTEGER PRIMARY KEY AUTOINCREMENT , fullName TEXT, occupation TEXT, other TEXT  )"
+        "CREATE TABLE IF NOT EXISTS $TAB_PERSON ( id INTEGER PRIMARY KEY AUTOINCREMENT , fullName TEXT, occupation TEXT, globalId TEXT, typeProfile Text, isAccountLocal Int )"
 
     private val CREATE_TABLE_TASK_STATUS: String =
-        "Create table if not exists $TAB_TASK_STATUS ( id INTEGER PRIMARY KEY AUTOINCREMENT , stateSend TEXT, date Long , idTask, FOREIGN KEY(idTask) REFERENCES $TAB_TASK(id) )"
+        "CREATE TABLE IF NOT EXISTs $TAB_TASK_STATUS ( id INTEGER PRIMARY KEY AUTOINCREMENT, stateSend TEXT, date Long , idTask, FOREIGN KEY(idTask) REFERENCES $TAB_TASK(id) )"
 
     private val CREATE_TABLE_TASK: String =
-        "Create table if not exists $TAB_TASK ( id INTEGER PRIMARY KEY AUTOINCREMENT , tittle TEXT, description TEXT, project TEXT, type TEXT, responsible LONG, author TEXT, date LONG, state TEXT, idPerson, FOREIGN KEY(idPerson) REFERENCES $TAB_PERSON(id)   )"
+        "CREATE TABLE IF NOT EXISTS $TAB_TASK ( id INTEGER PRIMARY KEY AUTOINCREMENT , tittle TEXT, description TEXT, project TEXT, type TEXT, responsible LONG, author LONG, date LONG, state TEXT   )"
     var dbm: SQLiteDatabase
 
 
@@ -63,18 +65,21 @@ class DBManager(context: Context) : SQLiteOpenHelper(context, context.getDBPath(
         when (T::class) {
             Person::class -> {
                 val person: Person = el as Person
-                columns = "fullName, occupation, other"
+                columns = "fullName, occupation, globalId,typeProfile"
                 currentTab = TAB_PERSON
                 cValues.put("fullName", person.fullName)
                 cValues.put("occupation", person.occupation)
-                cValues.put("other", person.other)
+                cValues.put("globalId", person.globalId)
+                cValues.put("typeProfile", person.typeProfile)
+                cValues.put("isAccountLocal", person.isAccountLocal)
+
             }
 
             OperationTaskStatus::class -> {
                 val opTaskStatus: OperationTaskStatus = el as OperationTaskStatus
                 columns = "stateSend, date"
                 currentTab = TAB_PERSON
-                cValues.put("stateSend", opTaskStatus.stateSend.name)
+                cValues.put("stateSend", opTaskStatus.sendState.name)
                 cValues.put("date", opTaskStatus.date)
             }
 
@@ -116,7 +121,7 @@ class DBManager(context: Context) : SQLiteOpenHelper(context, context.getDBPath(
      */
     fun updateStateOperationStatus(operationTaskStatus: OperationTaskStatus) {
         val cValues = ContentValues()
-        val stateValue = operationTaskStatus.stateSend.name
+        val stateValue = operationTaskStatus.sendState.name
         cValues.put("state", stateValue)
         dbm.beginTransaction()
         dbm.update(TAB_TASK_STATUS, cValues, "state=?", arrayOf(stateValue))
@@ -126,15 +131,26 @@ class DBManager(context: Context) : SQLiteOpenHelper(context, context.getDBPath(
 
 
     /**
+     *  update TAB_TASK_STATUS
+     */
+    fun updateStateTask(gsiTaskDescription: GSITaskDescription) {
+        val cValues = ContentValues()
+        val stateValue = gsiTaskDescription.state
+        cValues.put("state", stateValue)
+        dbm.beginTransaction()
+        dbm.update(TAB_TASK, cValues, "id=?", arrayOf(gsiTaskDescription.id.toString()))
+        dbm.setTransactionSuccessful()
+        dbm.endTransaction()
+    }
+
+
+    /**
      * get List Persons
      */
-    fun getListPersons(idPerson: String? = null): ArrayList<Person> {
+    fun getListPersons(where: ArrayList<MOption<String, String, Any>>? = null): ArrayList<Person> {
         val personList = arrayListOf<Person>()
         dbm = this.readableDatabase
-        val WHERE_CLAUSE = when {
-            idPerson != null -> " where id='$idPerson'"
-            else -> ""
-        }
+        val WHERE_CLAUSE = getWhereConditions(where)
 
         val cursor =
             dbm.rawQuery("select * FROM $TAB_PERSON $WHERE_CLAUSE ", null)
@@ -143,13 +159,38 @@ class DBManager(context: Context) : SQLiteOpenHelper(context, context.getDBPath(
                 val id = it.getLong(0)
                 val fullName = it.getString(1)
                 val occupation = it.getString(2)
-                val other = it.getString(3)
-                val person = Person(id, fullName, occupation, other)
+                val globalId = it.getString(3)
+                val typeProfile = it.getString(4)
+                val isAccountLocal = when (it.getInt(5)) {
+                    0 -> false
+                    else -> true
+                }
+                val person = Person(id, fullName, occupation, globalId, typeProfile, isAccountLocal)
                 personList.add(person)
             }
         }
         cursor?.close()
         return personList
+    }
+
+    private fun getWhereConditions(where: ArrayList<MOption<String, String, Any>>?): String {
+        where?.let {
+            val stringBuilder = StringBuilder()
+            var i = 0
+            if (it.isNotEmpty()) {
+                stringBuilder.append(" where ")
+                it.forEach { pair ->
+                    var str = pair.column.plus("${pair.operator}'${pair.value}'")
+                    i += 1
+                    if (i < where.size)
+                        str = str.plus(" and ")
+
+                    stringBuilder.append(str)
+                }
+            }
+            return stringBuilder.toString()
+        }
+        return ""
     }
 
     /**
@@ -170,8 +211,8 @@ class DBManager(context: Context) : SQLiteOpenHelper(context, context.getDBPath(
                 val id = it.getLong(0)
                 val status = it.getString(1)
                 val date = it.getLong(2)
-
-                val opStatus = OperationTaskStatus(id, StateSend.valueOf(status), date)
+                val idtask = it.getLong(2)
+                val opStatus = OperationTaskStatus(id, SendState.valueOf(status), date, idtask)
                 opStatusList.add(opStatus)
             }
         }
@@ -183,16 +224,13 @@ class DBManager(context: Context) : SQLiteOpenHelper(context, context.getDBPath(
     /**
      *
      */
-    fun getListTasks(idTask: String? = null): ArrayList<GSITaskDescription> {
+    fun getListTasks(where: ArrayList<MOption<String, String, Any>>?): ArrayList<GSITaskDescription> {
         val gsiTaskList = arrayListOf<GSITaskDescription>()
         dbm = this.readableDatabase
-        val WHERE_CLAUSE = when {
-            idTask != null -> " where id ='$idTask'"
-            else -> ""
-        }
+        val WHERE_CLAUSE = getWhereConditions(where)
 
         val cursor =
-            dbm.rawQuery("select * FROM $TAB_TASK $WHERE_CLAUSE ", null)
+            dbm.rawQuery("select * FROM $TAB_TASK $WHERE_CLAUSE ORDER BY id DESC", null)
         cursor?.let {
             while (cursor.moveToNext()) {
                 val id = it.getLong(0)
@@ -200,7 +238,7 @@ class DBManager(context: Context) : SQLiteOpenHelper(context, context.getDBPath(
                 val description = it.getString(2)
                 val project = it.getString(3)
                 val type = it.getString(4)
-                val responsible = it.getLong(5)
+                val responsible = it.getString(5)
                 val author = it.getString(6)
                 val date = it.getLong(7)
                 val state = it.getString(8)
@@ -244,6 +282,53 @@ class DBManager(context: Context) : SQLiteOpenHelper(context, context.getDBPath(
                 val opStatus = (cl as OperationTaskStatus)
                 val idLong = opStatus.id.toString()
                 dbm.delete(TAB_TASK, "id", arrayOf(idLong))
+            }
+            else -> {
+                throw(Exception("Clase sin checkear  delete:: DB!! ${T::class}"))
+            }
+        }
+    }
+
+    inline fun <reified T> getCount(): Int {
+        val table = getTab<T>()
+        val sql = "SELECT COUNT (*) FROM $table "
+        val cursor = dbm.rawQuery(sql, null)
+        var count = 0
+        cursor?.let { cur ->
+            cur.moveToFirst()
+            count = cur.getInt(0)
+        }
+        cursor?.close()
+        return count
+    }
+
+    inline fun <reified T> getLastId(e: T? = null): Int {
+        var id = 0
+        val mtable = getTab<T>()
+        val SELECT_MAX_ID = "SELECT MAX(id) FROM $mtable"
+        val cursor = dbm.rawQuery("$SELECT_MAX_ID ", null)
+        cursor?.let {
+            cursor.moveToFirst()
+            id = cursor.getInt(0) //.toInt()
+            Log.e("max id", "${id} :" + getCount<T>())
+        }
+
+        cursor?.close()
+
+        return id //if (id > 1) id+1 else id
+    }
+
+    inline fun <reified T> getTab(): String {
+        return when (T::class) {
+            GSITaskDescription::class -> {
+                TAB_TASK
+            }
+            Person::class -> {
+                TAB_PERSON
+            }
+
+            OperationTaskStatus::class -> {
+                TAB_TASK_STATUS
             }
             else -> {
                 throw(Exception("Clase sin checkear  delete:: DB!! ${T::class}"))
