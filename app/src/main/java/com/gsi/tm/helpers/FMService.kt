@@ -1,6 +1,7 @@
 package com.gsi.tm.helpers
 
 import android.util.Log
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -26,7 +27,7 @@ class FMService : FirebaseMessagingService() {
 
     override fun onDestroy() {
         super.onDestroy()
-
+        //com.google.firebase.messaging.RemoteMessage()
         unsubscribe()
     }
 

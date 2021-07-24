@@ -126,6 +126,20 @@ class DBManager(context: Context) : SQLiteOpenHelper(context, context.getDBPath(
 
 
     /**
+     *  update TAB_TASK_STATUS
+     */
+    fun updateStateTask(gsiTaskDescription: GSITaskDescription) {
+        val cValues = ContentValues()
+        val stateValue = gsiTaskDescription.state
+        cValues.put("state", stateValue)
+        dbm.beginTransaction()
+        dbm.update(TAB_TASK, cValues, "id=?", arrayOf(gsiTaskDescription.id.toString()))
+        dbm.setTransactionSuccessful()
+        dbm.endTransaction()
+    }
+
+
+    /**
      * get List Persons
      */
     fun getListPersons(idPerson: String? = null): ArrayList<Person> {

@@ -9,6 +9,7 @@ import com.gsi.tm.models.GSITaskDescription
 interface ContractMainActivViewPresent {
 
     interface Mview : BaseView {
+        fun exit()
         fun enableBarStatus(visible: Boolean)
         fun onSendMessage()
         fun onReceiveMessage(message: GSITaskDescription)
@@ -17,6 +18,5 @@ interface ContractMainActivViewPresent {
     interface Presenter : BasePresenter<Mview> {
         fun setSupportFragManager(supportFragment: FragmentManager, container: Int)
         override fun onCreateView(mView: Mview)
-
     }
 }

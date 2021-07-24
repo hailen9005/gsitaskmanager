@@ -11,6 +11,7 @@ import com.gsi.tm.interfaces.ContractAddTaskVP
 import com.gsi.tm.models.GSITaskDescription
 import com.gsi.tm.models.Person
 import com.gsi.tm.presenters.FragmentAddTaskViewPresenter
+import kotlin.reflect.KClass
 
 class FragmentAddtask : BaseFragment(), ContractAddTaskVP.MView {
 
@@ -81,14 +82,22 @@ class FragmentAddtask : BaseFragment(), ContractAddTaskVP.MView {
 
     }
 
-    override fun goBAck() {
-        mnavigator?.setFragment(FragmentGSIManager::class, null)
+    override fun goBack() {
+        mnavigator?.goTo(FragmentGSIManager::class, null)
+    }
+
+    override fun goTo(fragmentClazz: KClass<*>?, param: Any?) {
+        mnavigator?.goTo(fragmentClazz, null)
     }
 
     override fun onSelectedDate(dateMillis: Long) {
         this.dateMillis = dateMillis
         val dateStr = App.getDateFromMillis(dateMillis)
         rootView?.findViewById<TextView>(R.id.tv_date)?.text = dateStr
+    }
+
+    override fun onAddTask() {
+        this.goBack()
     }
 
 

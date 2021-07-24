@@ -1,5 +1,6 @@
 package com.gsi.tm.presenters
 
+import android.util.Log
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
 import com.gsi.tm.enums.TypeProfile
@@ -22,58 +23,82 @@ class MainActivityViewPresenter : ContractMainActivViewPresent.Presenter, INavig
         containerId = container
     }
 
-    override fun onDestroy() {
-
-    }
-
     override fun onCreateView(mView: ContractMainActivViewPresent.Mview) {
         mainView = mView
     }
 
-    override fun setFragment(fragmentClazz: KClass<*>, param: Any?) {
-        val transaction = this.supportFragmentManager?.beginTransaction()
-        containerId?.let { id ->
-            when (fragmentClazz) {
-
-                FragmentChooseProfile::class -> {
-                    mainView?.enableBarStatus(false)
-                    currentFragment = FragmentChooseProfile()
-                }
-                FragmentAddProfile::class -> {
-                    mainView?.enableBarStatus(false)
-                    currentFragment = FragmentAddProfile()
-                    currentFragment?.arguments =
-                        bundleOf(
-                            Pair("typeProfile", param as TypeProfile)
-                        )
-                }
-                FragmentGSIManager::class -> {
-                    currentFragment = FragmentGSIManager()
-                    mainView?.enableBarStatus(true)
-                }
-                FragmentGSITeamManager::class -> {
-                    currentFragment = FragmentGSITeamManager()
-                    mainView?.enableBarStatus(true)
-                }
-                FragmentGSITeamMember::class -> {
-                    currentFragment = FragmentGSITeamMember()
-                    mainView?.enableBarStatus(true)
-                }
+    override fun onDestroy() {
+        mainView = null
+    }
 
 
-                FragmentAddtask::class -> {
-                    currentFragment = FragmentAddtask()
-                    mainView?.enableBarStatus(true)
+    override fun goTo(fragmentClazz: KClass<*>?, param: Any?) {
+        fragmentClazz?.let {
+            val transaction = this.supportFragmentManager?.beginTransaction()
+            var enableBarStatus = false
+            containerId?.let { id ->
+                when (fragmentClazz) {
+                    FragmentChooseProfile::class -> {
+                        currentFragment = FragmentChooseProfile()
+                    }
+                    FragmentAddProfile::class -> {
+                        mainView?.enableBarStatus(false)
+                        currentFragment = FragmentAddProfile()
+                        currentFragment?.arguments =
+                            bundleOf(
+                                Pair("typeProfile", param as TypeProfile)
+                            )
+                    }
+                    FragmentGSIManager::class -> {
+                        enableBarStatus = true
+                        currentFragment = FragmentGSIManager()
+                    }
+                    FragmentGSITeamManager::class -> {
+                        enableBarStatus = true
+                        currentFragment = FragmentGSITeamManager()
+                    }
+                    FragmentGSITeamMember::class -> {
+                        enableBarStatus = true
+                        currentFragment = FragmentGSITeamMember()
+                    }
+                    FragmentAddtask::class -> {
+                        enableBarStatus = true
+                        currentFragment = FragmentAddtask()
+                    }
+                    FragmentTeamMemberEditTask::class -> {
+                        enableBarStatus = true
+                        currentFragment = FragmentTeamMemberEditTask()
+                        currentFragment?.arguments =
+                            bundleOf(
+                                Pair("idTask", param as Long)
+                            )
+                    }
+                    FragmentManagerEditTask::class -> {
+                        enableBarStatus = true
+                        currentFragment = FragmentManagerEditTask()
+                        currentFragment?.arguments =
+                            bundleOf(
+                                Pair("idTask", param as Long)
+                            )
+                    }
+
+                    else -> {
+                        throw(Exception("********Not declared Fragment into changer $fragmentClazz *********"))
+                    }
                 }
 
-                else -> {
-                    throw(Exception("********Not declared Fragment into changer $fragmentClazz *********"))
-                }
+                currentFragment?.setNavigator(this)
+                transaction?.replace(id, currentFragment!!, null)?.commit()
+                mainView?.enableBarStatus(enableBarStatus)
             }
-
-            currentFragment?.setNavigator(this)
-            transaction?.replace(id, currentFragment!!, null)?.commit()
+        } ?: kotlin.run {
+            Log.e("MainViewPresenter", "Exit from Application")
+            mainView?.exit()
         }
+    }
+
+    override fun goBack() {
+        currentFragment?.goBack()
     }
 
 

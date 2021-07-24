@@ -5,8 +5,8 @@ import com.gsi.tm.models.GSITaskDescription
 
 interface ContractAddTaskVP {
     interface MView : BaseView {
-        fun goBAck()
         fun onSelectedDate(dateMillis: Long)
+        fun onAddTask()
     }
 
     interface Presenter : BasePresenter<MView> {

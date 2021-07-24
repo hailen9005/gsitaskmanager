@@ -14,6 +14,7 @@ import com.gsi.tm.helpers.FMService
 import com.gsi.tm.interfaces.ContractMainActivViewPresent
 import com.gsi.tm.presenters.MainActivityViewPresenter
 import layout.FragmentChooseProfile
+import kotlin.reflect.KClass
 
 class MainActivity : AppCompatActivity(), ContractMainActivViewPresent.Mview {
 
@@ -25,7 +26,7 @@ class MainActivity : AppCompatActivity(), ContractMainActivViewPresent.Mview {
 
         mainPresenter.setSupportFragManager(supportFragmentManager, R.id.fragment_container_view)
         mainPresenter.onCreateView(this)
-        mainPresenter.setFragment(FragmentChooseProfile::class, null)
+        mainPresenter.goTo(FragmentChooseProfile::class, null)
         //  startService(Intent(this, FMService::class.java))
 
     }
@@ -36,6 +37,13 @@ class MainActivity : AppCompatActivity(), ContractMainActivViewPresent.Mview {
         mainPresenter.onDestroy()
     }
 
+    override fun onBackPressed() {
+        mainPresenter.goBack()
+    }
+
+    override fun exit() {
+        super.onBackPressed()
+    }
 
     override fun onSendMessage() {
 
@@ -45,8 +53,11 @@ class MainActivity : AppCompatActivity(), ContractMainActivViewPresent.Mview {
 
     }
 
+
     override fun enableBarStatus(visible: Boolean) {
         findViewById<ConstraintLayout>(R.id.cly_head_rmt).visibility =
             if (visible) View.VISIBLE else View.GONE
     }
+
+
 }

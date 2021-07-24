@@ -41,30 +41,26 @@ class FragmentChooseProfile : BaseFragment(), ContractVP.MView {
         //clickeable views
         lyManager?.setOnClickListener {
             fmChooseViewPresent?.onClickSelectedTypeProfile(TypeProfile.Manager)
-            navigateTo(FragmentAddProfile::class, TypeProfile.Manager)
-
+            goTo(FragmentAddProfile::class, TypeProfile.Manager)
         }
 
         lyTeamManager?.setOnClickListener {
             fmChooseViewPresent?.onClickSelectedTypeProfile(
                 TypeProfile.TeamManager
             )
-            navigateTo(FragmentAddProfile::class, TypeProfile.TeamManager)
+            goTo(FragmentAddProfile::class, TypeProfile.TeamManager)
         }
 
         lyMemberTeam?.setOnClickListener {
             fmChooseViewPresent?.onClickSelectedTypeProfile(
                 TypeProfile.TeamMember
             )
-            navigateTo(FragmentAddProfile::class, TypeProfile.TeamMember)
+            goTo(FragmentAddProfile::class, TypeProfile.TeamMember)
         }
 
         return rootView
     }
 
-    private fun navigateTo(kClass: KClass<*>, toProfile: TypeProfile) {
-        mnavigator?.setFragment(kClass, toProfile)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -74,6 +70,14 @@ class FragmentChooseProfile : BaseFragment(), ContractVP.MView {
     override fun onDestroy() {
         super.onDestroy()
         fmChooseViewPresent?.onDestroy()
+    }
+
+    override fun goBack() {
+        super.goBack()
+    }
+
+    override fun goTo(fragmentClazz: KClass<*>?, param: Any?) {
+        mnavigator?.goTo(fragmentClazz, param)
     }
 
 }

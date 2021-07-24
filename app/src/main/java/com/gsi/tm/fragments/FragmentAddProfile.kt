@@ -11,6 +11,7 @@ import com.gsi.tm.interfaces.ContractVP
 import com.gsi.tm.interfaces.ContractViewAddProfile
 import com.gsi.tm.presenters.FragmentAddProfileViewPresenter
 import layout.FragmentChooseProfile
+import kotlin.reflect.KClass
 
 class FragmentAddProfile : BaseFragment(), ContractViewAddProfile.MView {
     private var rootView: View? = null
@@ -44,10 +45,10 @@ class FragmentAddProfile : BaseFragment(), ContractViewAddProfile.MView {
                 when (typeProfile) {
                     TypeProfile.Manager -> FragmentGSIManager::class
                     TypeProfile.TeamManager -> FragmentGSITeamManager::class
-                    TypeProfile.TeamMember -> FragmentGSITeamManager::class
+                    TypeProfile.TeamMember -> FragmentGSITeamMember::class
                     else -> FragmentChooseProfile::class
                 }
-            mnavigator?.setFragment(targetFragment, TypeProfile.TeamMember)
+            goTo(targetFragment, TypeProfile.TeamMember)
         }
 
         return rootView
@@ -62,5 +63,10 @@ class FragmentAddProfile : BaseFragment(), ContractViewAddProfile.MView {
         super.onDestroy()
         fmAddViewPresent?.onDestroy()
     }
+
+    override fun goBack() {
+        mnavigator?.goTo(FragmentChooseProfile::class, null)
+    }
+
 
 }

@@ -4,5 +4,6 @@ enum class StateTask {
     New,
     Open,
     InProgress,
-    Closed
+    Closed,
+    OffTime
 }

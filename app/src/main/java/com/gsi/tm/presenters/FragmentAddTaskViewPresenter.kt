@@ -3,7 +3,6 @@ package com.gsi.tm.presenters
 import android.content.Context
 import com.gsi.tm.helpers.App
 import com.gsi.tm.interfaces.ContractAddTaskVP
-import com.gsi.tm.interfaces.INavigate
 import com.gsi.tm.models.GSITaskDescription
 
 class FragmentAddTaskViewPresenter(var context: Context) : ContractAddTaskVP.Presenter {
@@ -17,7 +16,7 @@ class FragmentAddTaskViewPresenter(var context: Context) : ContractAddTaskVP.Pre
 
     override fun onClickAddTask(taskDescription: GSITaskDescription) {
         App.getManagerDB(context)?.insert(taskDescription)
-        mView?.goBAck()
+        mView?.onAddTask()
     }
 
     override fun showPickerDate() {

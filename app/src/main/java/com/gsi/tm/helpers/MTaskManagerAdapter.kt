@@ -13,6 +13,10 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.gsi.tm.R
+import com.gsi.tm.helpers.App.getDrawableByState
+import com.gsi.tm.interfaces.BasePresenter
+import com.gsi.tm.interfaces.BaseView
+import com.gsi.tm.interfaces.IGSISelectionTask
 import com.gsi.tm.models.GSITaskDescription
 import java.io.File
 import java.io.FileReader
@@ -22,6 +26,7 @@ import kotlin.properties.Delegates
 class MTaskManagerAdapter(val layoutInflater: LayoutInflater, val context: Context) :
     RecyclerView.Adapter<MTaskManagerAdapter.MviewHolder>() {
 
+    var listener: IGSISelectionTask? = null
     var listTask = arrayListOf<GSITaskDescription>()
 
     init {
@@ -32,13 +37,8 @@ class MTaskManagerAdapter(val layoutInflater: LayoutInflater, val context: Conte
 
     inner class MviewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        var imvS: ImageView? = null
-
-        var currentPosition by Delegates.observable(0) { property, oldValue, newValue ->
-            //     Log.e("positio" , " "+oldValue+ " : " + newValue)
-            //   handler.post { createView(this, adapterPosition) }
-        }
-
+        var imvProfile: ImageView? = null
+        var currentPosition by Delegates.observable(0) { property, oldValue, newValue -> }
         var task: Any?/* ImageLoader? */ = null
 
         /**
@@ -68,10 +68,19 @@ class MTaskManagerAdapter(val layoutInflater: LayoutInflater, val context: Conte
                 " " + position + " : " + this.currentPosition + " :" + this.position
             )
 
-
-            //     CreateTaskImageLoader( , 0, null, imvS!!)
-
-
+            val gsiTaskDescription = listTask[position]
+            val dateStr = App.getDateFromMillis(gsiTaskDescription.date)
+            val state = gsiTaskDescription.stateTask
+            val drawableByState = context.getDrawableByState(state)
+            imvProfile = this.itemView.findViewById(R.id.imv_profile_item_task)
+            this.itemView.findViewById<TextView>(R.id.tv_title).text = gsiTaskDescription.tittle
+            this.itemView.findViewById<TextView>(R.id.tv_date_item_task).text = dateStr
+            this.itemView.findViewById<TextView>(R.id.tv_state).text = state.name
+            this.itemView.findViewById<ImageView>(R.id.imv_state).setImageDrawable(drawableByState)
+            this.itemView.setOnClickListener {
+                listener?.onSelectectedTask(gsiTaskDescription)
+            }
+            //     CreateTaskImageLoader( , 0, null, imvProfile)
             return null
         }
 

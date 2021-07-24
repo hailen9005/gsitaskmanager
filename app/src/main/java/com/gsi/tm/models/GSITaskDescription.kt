@@ -14,7 +14,7 @@ class GSITaskDescription(
     var date: Long,
     var state: String = StateTask.New.name
 ) {
-    var stateTask: StateTask by Delegates.observable(StateTask.New) { property, oldValue, newValue ->
+    var stateTask: StateTask by Delegates.observable(StateTask.valueOf(state)) { property, oldValue, newValue ->
         state = newValue.name
     }
 

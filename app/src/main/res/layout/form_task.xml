@@ -60,7 +60,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:text="@string/tittle" />
+            android:text="@string/task_tittle" />
 
         <EditText
             android:id="@+id/edt_task_title"

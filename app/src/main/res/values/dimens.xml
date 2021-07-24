@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) Desarrollado por Hailen Baez,
+  -->
+
+<resources>
+    <dimen name="d400dp">400dp</dimen>
+</resources>
