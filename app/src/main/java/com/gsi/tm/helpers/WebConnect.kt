@@ -1,6 +1,8 @@
 package com.gsi.tm.helpers
 
 import android.util.Log
+import com.google.firebase.messaging.FirebaseMessaging
+import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -37,5 +39,39 @@ object WebConnect {
         }
     }
 
+
+    fun subscribe(topic: String) {
+        FirebaseMessaging.getInstance().subscribeToTopic(topic).addOnSuccessListener {
+            Log.d(TAG, "task subscription")
+        }
+        FirebaseMessaging.getInstance().subscribeToTopic(topic).addOnCompleteListener { task ->
+            var msg = " addOnCompleteListener ok"
+            if (!task.isSuccessful) {
+                msg = "addOnCompleteListener failed  "
+            }
+            Log.d(TAG, msg)
+
+        }
+    }
+
+    fun unsubscribe(topic: String) {
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(topic).addOnSuccessListener {
+            Log.d(TAG, "task subscription")
+        }
+
+    }
+
+    val topic = App.TOPIC
+    fun contructMessage(title: String, content: String): String {
+        // val jsonArray = JSONArray(listOf(100,101, 102, 103,104))
+        //JSONObject().put("aio",jsonArray)
+        val body = JSONObject()
+        val data = JSONObject()
+        data.put("title", title)
+        data.put("content", content)
+        body.put("data", data)
+        body.put("to", "/topics/$topic")
+        return body.toString()
+    }
 
 }

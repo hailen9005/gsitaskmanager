@@ -14,6 +14,8 @@ interface IMainActivViewPresentContract {
         fun onSendMessage()
         fun onReceiveMessage(message: GSITaskDescription)
         fun onSelectedUser(person: Person)
+        fun notifyEvent(gsiTaskDescription: GSITaskDescription)
+        fun resetNotifyEvent()
     }
 
     interface Presenter : IBasePresenter<Mview> {

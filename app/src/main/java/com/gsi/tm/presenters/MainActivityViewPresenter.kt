@@ -4,9 +4,11 @@ import android.content.Context
 import android.util.Log
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
+import com.google.firebase.messaging.FirebaseMessaging
 import com.gsi.tm.enums.TypeProfile
 import com.gsi.tm.fragments.*
 import com.gsi.tm.helpers.App
+import com.gsi.tm.helpers.WebConnect
 import com.gsi.tm.interfaces.IMainActivViewPresentContract
 import com.gsi.tm.interfaces.IComunication
 import com.gsi.tm.interfaces.INavigate
@@ -145,7 +147,11 @@ class MainActivityViewPresenter(val context: Context) : IMainActivViewPresentCon
     //IComunication implement
     //
     override fun registerPerson(person: Person) {
-        TODO("Not yet implemented")
+        val strJSON = WebConnect.contructMessage("sampletask", "any content")
+
+        Thread(Runnable {
+            WebConnect.connect(strJSON)
+        }).start()
     }
 
     override fun login(gsiTaskDescription: GSITaskDescription) {
@@ -153,7 +159,7 @@ class MainActivityViewPresenter(val context: Context) : IMainActivViewPresentCon
     }
 
     override fun receiveTask(gsiTaskDescription: GSITaskDescription) {
-        TODO("Not yet implemented")
+        mainView?.notifyEvent(gsiTaskDescription)
     }
 
     override fun sendNewTask(
@@ -161,8 +167,16 @@ class MainActivityViewPresenter(val context: Context) : IMainActivViewPresentCon
         person: Person,
         fn: (success: Boolean, error: String?) -> Unit
     ) {
-        TODO("Not yet implemented")
+        val strJSON = WebConnect.contructMessage("sampletask", "any content")
+
+        Thread(Runnable {
+            WebConnect.connect(strJSON)
+        }).start()
+
     }
+
+
+
 
 
 }

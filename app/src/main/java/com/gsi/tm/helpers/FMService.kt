@@ -26,7 +26,7 @@ class FMService : FirebaseMessagingService() {
 
     override fun onNewToken(p0: String) {
         super.onNewToken(p0)
-
+        getSharedPreferences("token", MODE_PRIVATE).edit().putString("token", p0).apply();
         Log.e(TAG, "new token $p0")
     }
 

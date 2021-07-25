@@ -12,11 +12,12 @@ import com.gsi.tm.R
 import com.gsi.tm.enums.StateTask
 import com.gsi.tm.interfaces.IEditTeamManagerContract
 import com.gsi.tm.interfaces.IEditTeamMemberContract
+import com.gsi.tm.presenters.EditTeamMemberVPresenter
 import kotlin.reflect.KClass
 
 class EditTaskTeamManagerFragment : BaseFragment(), IEditTeamManagerContract.MView {
     var rootView: View? = null
-    //  val presenter: ContractTeamMemberEditGSI.Presenter? = null
+    val presenter: EditTeamMemberVPresenter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -25,7 +26,7 @@ class EditTaskTeamManagerFragment : BaseFragment(), IEditTeamManagerContract.MVi
     ): View? {
 
 
-        rootView = layoutInflater.inflate(R.layout.view_edit_task, null)
+        rootView = layoutInflater.inflate(R.layout.form_task_add, null)
         return rootView
     }
 
