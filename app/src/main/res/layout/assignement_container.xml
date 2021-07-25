@@ -31,19 +31,18 @@
             android:layout_height="match_parent">
 
             <LinearLayout
-                android:orientation="vertical"
+                android:id="@+id/ly_person_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-                <include layout="@layout/item_person_min" />
 
-                <include layout="@layout/item_person_min" />
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
 
     <ImageButton
-        android:id="@+id/button"
+        android:id="@+id/btn_delete_all"
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_marginTop="5dp"

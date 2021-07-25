@@ -14,9 +14,15 @@ class ListTaskFragmentViewPresenter(val context: Context) : IListTaskContract.Pr
     }
 
     override fun listTask(listingOption: ListOption, person: Person, pos: Int) {
+        val seeOnlyMyTask = view?.isOnlyMyTaskList() ?: false
         val options: MOption<String, String, Any>? = when (person) {
             is Manager -> MOption("author", value = person.globalId)
-            is TeamManager -> MOption("responsible", value = person.globalId)
+            is TeamManager -> {
+                if (!seeOnlyMyTask)
+                    MOption("responsible", value = person.globalId)
+                else
+                    MOption("author", value = person.globalId)
+            }
             is TeamMember -> MOption("responsible", value = person.globalId)
             else -> null
         }
@@ -31,6 +37,7 @@ class ListTaskFragmentViewPresenter(val context: Context) : IListTaskContract.Pr
                 MOption("state", "!=", StateTask.Closed)
             }
         }
+
 
         val listOptions = arrayListOf<MOption<String, String, Any>>()
         optionAll?.let {

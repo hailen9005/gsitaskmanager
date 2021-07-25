@@ -4,4 +4,5 @@
 
 <resources>
     <dimen name="d400dp">400dp</dimen>
+    <dimen name="d2dp">2dp</dimen>
 </resources>

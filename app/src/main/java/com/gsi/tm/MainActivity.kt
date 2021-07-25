@@ -43,12 +43,7 @@ class MainActivity : AppCompatActivity(), IMainActivViewPresentContract.Mview {
 
         mainPresenter?.loadHomeView()
 
-        FirebaseMessaging.getInstance().deleteToken()
-        FirebaseMessaging.getInstance().token.addOnSuccessListener { newToken ->
-            //  String newToken = instanceIdResult.getToken();
-            Log.e("newToken", newToken);
-            getSharedPreferences("token", MODE_PRIVATE).edit().putString("token", newToken).apply();
-        }
+
 
         Log.d("newToken", "" + getPreferences(MODE_PRIVATE).getString("token", "??"))
     }

@@ -21,11 +21,18 @@ import layout.AccountSelectFragment
 
 open class ListTaskFragment : BaseFragment(), IListTaskContract.MView, IOnItemAdapter {
 
+    //ui
     var rootView: View? = null
-    var presenter: IListTaskContract.Presenter? = null
-    var recyclerView: RecyclerView? = null
+    var btnAssignedTasks: ImageButton? = null
+    var btnMyTasks: ImageButton? = null
     lateinit var tabHost: TabHost
     private lateinit var btnAdd: ImageButton
+
+    // properties
+    var presenter: IListTaskContract.Presenter? = null
+    var recyclerView: RecyclerView? = null
+    var seeOnlyMyTask = true
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,9 +40,11 @@ open class ListTaskFragment : BaseFragment(), IListTaskContract.MView, IOnItemAd
         savedInstanceState: Bundle?
     ): View {
 
-        rootView = inflater.inflate(R.layout.manager_view_main, null)
-        btnAdd = rootView!!.findViewById<ImageButton>(R.id.btn_add_task)!!
-        tabHost = rootView!!.findViewById<TabHost>(R.id.tabhost)
+        rootView = inflater.inflate(R.layout.main_panel_list_task, null)
+        btnAdd = rootView!!.findViewById(R.id.btn_add_task)!!
+        btnMyTasks = rootView!!.findViewById(R.id.btn_see_personal_task)!!
+        btnAssignedTasks = rootView!!.findViewById(R.id.btn_see_group_task)!!
+        tabHost = rootView!!.findViewById(R.id.tabhost)
         tabHost.setup()
 
         var spec: TabSpec = tabHost.newTabSpec("tag1")
@@ -63,15 +72,12 @@ open class ListTaskFragment : BaseFragment(), IListTaskContract.MView, IOnItemAd
         (l2.getChildAt(1) as TextView).setTextColor(color)
         (l3.getChildAt(1) as TextView).setTextColor(color)
 
-
-
         tabHost.tabWidget.getChildAt(0).setOnClickListener {
             onTabSelected(ListOption.All, 0)
         }
 
         tabHost.tabWidget.getChildAt(1).setOnClickListener {
             onTabSelected(ListOption.Completed, 1)
-
         }
 
         tabHost.tabWidget.getChildAt(2).setOnClickListener {
@@ -80,6 +86,21 @@ open class ListTaskFragment : BaseFragment(), IListTaskContract.MView, IOnItemAd
 
         btnAdd.setOnClickListener {
             mNavigator?.goTo(AddTaskFragment::class, null)
+        }
+
+        btnMyTasks?.setOnClickListener {
+            seeOnlyMyTask = false
+            onTabSelected(ListOption.Incomplete, tabHost.currentTab)
+        }
+
+        btnAssignedTasks?.setOnClickListener {
+            seeOnlyMyTask = true
+            onTabSelected(ListOption.Incomplete, tabHost.currentTab)
+        }
+
+        App.profileUser?.let { person ->
+            if (person !is TeamManager)
+                (btnAssignedTasks?.parent as? View)?.visibility = View.GONE
         }
 
         return rootView!!
@@ -159,7 +180,6 @@ open class ListTaskFragment : BaseFragment(), IListTaskContract.MView, IOnItemAd
     }
 
     override fun goBack() {
-
         var countUsers = 0
         context?.let {
             countUsers = App.getManagerDB(it)?.getCount<Person>() ?: 0
@@ -170,5 +190,7 @@ open class ListTaskFragment : BaseFragment(), IListTaskContract.MView, IOnItemAd
         else
             super.goBack()
     }
+
+    override fun isOnlyMyTaskList() = seeOnlyMyTask
 
 }

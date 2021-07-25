@@ -21,7 +21,7 @@ import com.gsi.tm.models.Person
 import java.lang.StringBuilder
 
 class DBManager(context: Context) : SQLiteOpenHelper(context, context.getDBPath(), null, 1) {
-    private val TAB_GROUPS = "typeProfile"
+    private val TAB_USER_TASK = "userTask"
     val TAB_PERSON: String = "person"
     val TAB_TASK: String = "task"
     val TAB_TASK_STATUS: String = "operationTaskStatus"
@@ -29,9 +29,6 @@ class DBManager(context: Context) : SQLiteOpenHelper(context, context.getDBPath(
     private val CREATE_TABLE_PERSON: String =
         "CREATE TABLE IF NOT EXISTS $TAB_PERSON ( id INTEGER PRIMARY KEY AUTOINCREMENT , fullName TEXT, occupation TEXT, globalId TEXT, typeProfile Text, isAccountLocal Int )"
 
-    /*private val CREATE_TABLE_GROUPS: String =
-        "CREATE TABLE IF NOT EXISTS $TAB_GROUPS ( id INTEGER PRIMARY KEY AUTOINCREMENT , fullName TEXT, occupation TEXT, globalId TEXT, typeProfile Text, idPerson FOREIGN KEY(idPerson) REFERENCES $TAB_PERSON(id) )"
-*/
     private val CREATE_TABLE_TASK_STATUS: String =
         "CREATE TABLE IF NOT EXISTs $TAB_TASK_STATUS ( id INTEGER PRIMARY KEY AUTOINCREMENT, stateSend TEXT, date Long , idTask, FOREIGN KEY(idTask) REFERENCES $TAB_TASK(id) )"
 

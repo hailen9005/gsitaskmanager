@@ -7,11 +7,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 import com.gsi.tm.R
 import com.gsi.tm.helpers.App
+import com.gsi.tm.helpers.App.createRecyclerView
+import com.gsi.tm.helpers.App.setAdaterToRecyclerView
+import com.gsi.tm.helpers.App.showPopud
 import com.gsi.tm.interfaces.IComunication
 import com.gsi.tm.interfaces.INavigate
+import com.gsi.tm.interfaces.IOnItemAdapter
+import kotlinx.android.synthetic.main.role_member_team.*
 import kotlin.reflect.KClass
 
 open class BaseFragment : Fragment(), INavigate {
@@ -44,7 +51,7 @@ open class BaseFragment : Fragment(), INavigate {
 
     override fun onDestroyView() {
         super.onDestroyView()
-
+        popupWindow?.dismiss()
     }
 
     /***
@@ -85,6 +92,52 @@ open class BaseFragment : Fragment(), INavigate {
         return sizePopud
     }
 
+
+    /**
+     * select a User from floating list
+     */
+    fun showSelectPerson(
+        rootView: View,
+        recyclerView: RecyclerView,
+        viewPicker: View,
+        listener: IOnItemAdapter
+    ) {
+        this.recyclerView = recyclerView
+        viewPicker.setOnClickListener {
+            onClickPicker(rootView, listener)
+        }
+
+    }
+
+    private var recyclerView: RecyclerView? = null
+
+
+    private fun onClickPicker(
+        rootView: View,
+        listener: IOnItemAdapter
+    ) {
+        context?.let {
+            (recyclerView?.parent as? LinearLayout)?.removeAllViews()
+            popupWindow?.dismiss()
+            val lyContainer: ConstraintLayout =
+                layoutInflater.inflate(R.layout.ly_container_recycler, null) as ConstraintLayout
+            val lyRecyclerContainer =
+                lyContainer.findViewById<LinearLayout>(R.id.ly_container_recycler)
+            lyRecyclerContainer.addView(recyclerView)
+            val size = App.getScreenSize(it)
+            val widthHeight = Point(size.x - (size.x / 3), size.y - (size.y / 3))
+            popupWindow = context?.showPopud(lyContainer, rootView, widthHeight, Point(0, 0))
+            val listTask = App.getManagerDB(it)?.getListPersons() ?: arrayListOf()
+            recyclerView?.setAdaterToRecyclerView(listTask, listener, R.layout.item_person, it)
+            val btnDismissPopud: Button = lyContainer.findViewById(R.id.btn_cancel)
+            btnDismissPopud.setOnClickListener {
+                popupWindow?.dismiss()
+            }
+            popupWindow?.setOnDismissListener {
+
+            }
+        }
+    }
 
     /**
      * null param execute onbackPressed on Activity

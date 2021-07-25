@@ -22,10 +22,11 @@ import kotlin.reflect.KClass
 
 class AddTaskFragment : BaseFragment(), IAddTaskViewPresentContract.MView, IOnItemAdapter {
 
+    //ui init
     private var rootView: View? = null
     private var recyclerView: RecyclerView? = null
 
-    //
+    //properties init
     private var personSelected: Person? = null
     var presenter: IAddTaskViewPresentContract.Presenter? = null
     var dateMillis = System.currentTimeMillis()
@@ -42,54 +43,55 @@ class AddTaskFragment : BaseFragment(), IAddTaskViewPresentContract.MView, IOnIt
         }
 
         presenter?.onCreateView(this)
-
-        val imagePicker = rootView!!.findViewById<ImageView>(R.id.imv_profile_add_task)
-        imagePicker.setOnClickListener {
-            context?.let {
-                val lyContainer: ConstraintLayout =
-                    inflater.inflate(R.layout.ly_container_recycler, null) as ConstraintLayout
-                recyclerView = context?.createRecyclerView()
-                val lyRecyclerContainer =
-                    lyContainer.findViewById<LinearLayout>(R.id.ly_container_recycler)
-                lyRecyclerContainer.addView(recyclerView)
-                val size = App.getScreenSize(it)
-                val widthHeight = Point(size.x - (size.x / 3), size.y - (size.y / 3))
-                popupWindow = context?.showPopud(lyContainer, rootView!!, widthHeight, Point(0, 0))
-                val listTask = App.getManagerDB(it)?.getListPersons() ?: arrayListOf()
-                recyclerView?.setAdaterToRecyclerView(listTask, this, R.layout.item_person, it)
-                val btnCancel: Button = lyContainer.findViewById(R.id.btn_cancel)
-                btnCancel.setOnClickListener {
-                    popupWindow?.dismiss()
-                }
-            }
-        }
-
+        setActionSelectPerson()
+        setActionAssignTask()
 
         val btnCancel = rootView!!.findViewById<Button>(R.id.btn_cancel)
         btnCancel.setOnClickListener {
             goBack()
         }
-
-        val btnAdd = rootView!!.findViewById<Button>(R.id.btn_assign_task)
-        btnAdd.setOnClickListener {
-            personSelected?.let {
-                presenter?.onClickAddTask(getTaskDescriptionGSI())
-            } ?: kotlin.run {
-                context?.let {
-                    popupWindow = it.showPopud(
-                        containerPopupView,
-                        rootView!!,
-                        getSizePopudHeigth400dp(it),
-                        Point(0, 0)
-                    )
-                    setPopudMessages("Please select a person first from logo image")
-                }
-            }
-        }
-
         return rootView
     }
 
+    /**
+     *  Assign task to user
+     */
+    private fun setActionAssignTask() {
+        val btnAdd = rootView!!.findViewById<Button>(R.id.btn_assign_task)
+        btnAdd.setOnClickListener {
+            onClickAssign()
+        }
+    }
+
+    private fun onClickAssign() {
+        personSelected?.let {
+            presenter?.onClickAddTask(getTaskDescriptionGSI())
+        } ?: kotlin.run {
+            context?.let {
+                popupWindow = it.showPopud(
+                    containerPopupView,
+                    rootView!!,
+                    getSizePopudHeigth400dp(it),
+                    Point(0, 0)
+                )
+                setPopudMessages("Please select a person first from logo image")
+            }
+        }
+    }
+
+    fun setActionSelectPerson() {
+        recyclerView = null
+        recyclerView = context?.createRecyclerView()
+        val imagePicker = rootView!!.findViewById<ImageView>(R.id.imv_profile_add_task)
+        rootView?.let { rView ->
+            showSelectPerson(rView, recyclerView!!, imagePicker, this)
+        }
+    }
+
+    /**
+     * build a task from UI
+     *
+     */
     private fun getTaskDescriptionGSI(): GSITaskDescription {
         //init
         val edtTitle = rootView?.findViewById<EditText>(R.id.edt_task_title)
@@ -120,6 +122,10 @@ class AddTaskFragment : BaseFragment(), IAddTaskViewPresentContract.MView, IOnIt
         )
     }
 
+
+    /**
+     * show PickerDate
+     */
     private fun showPickerDate() {
 
     }
@@ -127,7 +133,6 @@ class AddTaskFragment : BaseFragment(), IAddTaskViewPresentContract.MView, IOnIt
 
     override fun onDestroyView() {
         super.onDestroyView()
-
     }
 
     override fun goBack() {
@@ -153,6 +158,7 @@ class AddTaskFragment : BaseFragment(), IAddTaskViewPresentContract.MView, IOnIt
         personSelected = person
         val fullName = person.fullName
         val profile = person.typeProfile
+
         rootView?.findViewById<TextView>(R.id.tv_profile_name)?.text = fullName
         rootView?.findViewById<TextView>(R.id.tv_profile_role)?.text = profile
         popupWindow?.dismiss()

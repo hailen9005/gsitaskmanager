@@ -36,7 +36,7 @@ class MTaskManagerAdapter<T>(
         }
 
         /**
-         *  CreateTaskImageLoader
+         *  CreateTaskImageLoader to work with disklruCache
          */
         fun CreateTaskImageLoader(imFilePath: File, res: Int, bm: Bitmap?, imvS: ImageView) {
             //task = ImageLoader()
@@ -47,19 +47,11 @@ class MTaskManagerAdapter<T>(
          * createView
          */
         fun createView()/*: ImageLoader?*/: Any? {
-
             val position = adapterPosition
-            Log.e(
-                "positio",
-                " " + position + " : " + this.currentPosition + " :" + this.position
-            )
-
             listener?.constructView(listTask[position], this.itemView)
             //     CreateTaskImageLoader( , 0, null, imvProfile)
             return null
         }
-
-
     }
 
 
@@ -87,7 +79,7 @@ class MTaskManagerAdapter<T>(
 
     override fun onViewDetachedFromWindow(holder: MviewHolder) {
         super.onViewDetachedFromWindow(holder)
-        Log.e("*", "onViewDetachedFromWindow" + holder.adapterPosition)
+        // Log.e("*", "onViewDetachedFromWindow" + holder.adapterPosition)
         holder.cancelTasks()
         listener?.detachedFromWindow(holder.itemView)
     }
@@ -96,8 +88,7 @@ class MTaskManagerAdapter<T>(
     override fun onViewAttachedToWindow(holder: MviewHolder) {
         super.onViewAttachedToWindow(holder)
         holder.createView()
-        Log.e("*", "onViewAttachedFromWindow" + holder.adapterPosition)
-
+        //Log.e("*", "onViewAttachedFromWindow" + holder.adapterPosition)
     }
 
     override fun onBindViewHolder(holder: MviewHolder, position: Int) {

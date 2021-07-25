@@ -8,6 +8,7 @@ import java.util.ArrayList
 interface IListTaskContract {
     interface MView : IBaseView {
         fun showListTask(listTask: ArrayList<GSITaskDescription>, pos: Int)
+        fun isOnlyMyTaskList(): Boolean
     }
 
     interface Presenter : IBasePresenter<MView> {

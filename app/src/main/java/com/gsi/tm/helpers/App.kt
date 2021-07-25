@@ -130,10 +130,6 @@ object App {
             location?.x ?: -10,
             location?.y ?: 5
         )
-
-        popupWindow.setOnDismissListener {
-
-        }
         popupWindow.isOutsideTouchable = true
         popupWindow.isFocusable = true
 
