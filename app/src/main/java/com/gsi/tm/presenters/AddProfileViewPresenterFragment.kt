@@ -1,6 +1,7 @@
 package com.gsi.tm.presenters
 
 import android.content.Context
+import android.util.Log
 import com.gsi.tm.enums.TypeProfile
 import com.gsi.tm.helpers.App
 import com.gsi.tm.interfaces.IViewAddProfileContract
@@ -41,6 +42,12 @@ class AddProfileViewPresenterFragment(val context: Context) : IViewAddProfileCon
         App.profileUser = person
         person?.let {
             App.getManagerDB(context)?.insert(person)
+            //for test purpose callback is not handle
+            mView?.getSender()?.registerPerson(person) { result, error ->
+                if (!result)
+                    Log.e("registerPerson", "user register failed")
+            }
+
         }
 
         mView?.onAddProfile(profile)

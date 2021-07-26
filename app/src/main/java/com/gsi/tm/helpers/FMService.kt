@@ -1,10 +1,11 @@
 package com.gsi.tm.helpers
 
 import android.util.Log
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.gsi.tm.models.MOption
+import com.gsi.tm.models.Person
+import com.gsi.tm.models.TokenDevices
 import org.json.JSONObject
 
 
@@ -18,15 +19,12 @@ class FMService : FirebaseMessagingService() {
 
     override fun onDestroy() {
         super.onDestroy()
-        //com.google.firebase.messaging.RemoteMessage()
-
     }
-
 
 
     override fun onNewToken(p0: String) {
         super.onNewToken(p0)
-        getSharedPreferences("token", MODE_PRIVATE).edit().putString("token", p0).apply();
+        getSharedPreferences("token", MODE_PRIVATE).edit().putString("token", p0).apply()
         Log.e(TAG, "new token $p0")
     }
 
@@ -51,6 +49,8 @@ class FMService : FirebaseMessagingService() {
             val content = remoteMessage.data["content"]
             val idDev = remoteMessage.data["registration_ids"]
             Log.d(TAG, "onMessageReceived: $title $content $idDev  $senderId : $messageId ")
+
+            insertOnDB(title, content, remoteMessage.data)
         }
 
         // Check if message contains a notification payload.
@@ -62,7 +62,41 @@ class FMService : FirebaseMessagingService() {
         // message, here is where that should be initiated. See sendNotification method below.
     }
 
+    private fun insertOnDB(title: String?, content: String?, mdata: MutableMap<String, String>) {
+        if ((title == "token") and (content?.contains("register") == true)) {
+            val data = JSONObject(mdata as Map<*, *>)
+            val fullName = data["fullName"] as String
+            val occupation = data["occupation"] as String
+            val globalId = data["globalId"] as String
+            val typeProfile = data["typeProfile"] as String
+            val token = data["token"] as String
 
+            val isAccountLocal =
+                App.getManagerDB(baseContext)?.getListPersons(
+                    arrayListOf(
+                        MOption(
+                            "globalId",
+                            value = globalId
+                        )
+                    )
+                )?.firstOrNull()?.isAccountLocal ?: false
+
+            if (!isAccountLocal) { //already
+                val person = Person(
+                    fullName = fullName,
+                    occupation = occupation,
+                    globalId = globalId,
+                    isAccountLocal = isAccountLocal,
+                    typeProfile = typeProfile
+                )
+                App.getManagerDB(baseContext)?.insert(person)
+            }
+            val tokenDevice = TokenDevices(-1, token, globalId)
+            App.getManagerDB(baseContext)?.insert(tokenDevice)
+
+
+        }
+    }
 
 
 }

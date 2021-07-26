@@ -27,9 +27,12 @@ import java.util.*
 
 object App {
 
+
     /*
-    *   Firebase
-    */
+     *   Firebase
+     */
+    val topicTask = "topicTask"
+    val topicNewUser = "topicNewUser"
     val TOPIC = "manger"
     val FIREBASE_SERVER = "https://fcm.googleapis.com/fcm/send"
     val SERVER_KEY =

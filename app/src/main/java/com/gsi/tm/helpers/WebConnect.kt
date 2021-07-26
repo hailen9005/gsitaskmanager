@@ -46,7 +46,7 @@ object WebConnect {
     }
 
 
-    fun subscribe(topic: String) {
+    fun subscribe(topic: String, fn: (result: Boolean) -> Unit) {
         FirebaseMessaging.getInstance().subscribeToTopic(topic).addOnSuccessListener {
             Log.d(TAG, "task subscription")
         }
@@ -55,8 +55,8 @@ object WebConnect {
             if (!task.isSuccessful) {
                 msg = "addOnCompleteListener failed  "
             }
-            Log.d(TAG, msg)
-
+            Log.d(TAG, msg.plus(" topic: $topic"))
+            fn.invoke(task.isSuccessful)
         }
     }
 
@@ -67,14 +67,24 @@ object WebConnect {
 
     }
 
-    val topic = App.TOPIC
-    fun contructMessage(title: String, content: String): String {
+
+    fun contructMessage(
+        title: String,
+        content: String,
+        topic: String,
+        list: ArrayList<Pair<String, String>>
+    ): String {
         // val jsonArray = JSONArray(listOf(100,101, 102, 103,104))
         //JSONObject().put("aio",jsonArray)
+
         val body = JSONObject()
         val data = JSONObject()
         data.put("title", title)
         data.put("content", content)
+
+        list.forEach {
+            data.put(it.first, it.second)
+        }
         body.put("data", data)
         body.put("to", "/topics/$topic")
         return body.toString()

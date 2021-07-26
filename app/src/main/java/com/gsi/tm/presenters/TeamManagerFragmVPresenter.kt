@@ -4,7 +4,7 @@ import com.gsi.tm.enums.ListOption
 import com.gsi.tm.interfaces.ITeamManagerContract
 import com.gsi.tm.interfaces.INavigate
 
-class FragmentTeamManagerViewPresenter : ITeamManagerContract.Presenter {
+class TeamManagerFragmViewVPresenter : ITeamManagerContract.Presenter {
     var view: ITeamManagerContract.MView? = null
     var mnavigator: INavigate? = null
 

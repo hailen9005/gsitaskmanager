@@ -15,6 +15,7 @@ import com.gsi.tm.fragments.team_manager.TeamManagerFragment
 import com.gsi.tm.fragments.team_member.TeamMemberFragment
 import com.gsi.tm.helpers.App.requireLength
 import com.gsi.tm.helpers.App.showPopud
+import com.gsi.tm.interfaces.IComunication
 import com.gsi.tm.interfaces.IViewAddProfileContract
 import com.gsi.tm.presenters.AddProfileViewPresenterFragment
 import layout.ChooseProfileFragment
@@ -101,6 +102,10 @@ class AddProfileFragment : BaseFragment(), IViewAddProfileContract.MView {
 
         goTo(targetFragment, typeProfile)
 
+    }
+
+    override fun getSender(): IComunication? {
+        return mSender
     }
 
 

@@ -2,8 +2,11 @@ package com.gsi.tm.presenters
 
 import android.content.Context
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.RemoteMessage
 import com.gsi.tm.enums.TypeProfile
 import com.gsi.tm.fragments.*
 import com.gsi.tm.fragments.manager.EditTaskManagerFragment
@@ -41,6 +44,7 @@ class MainActivityViewPresenter(val context: Context) : IMainActivViewPresentCon
 
     override fun onCreateView(mView: IMainActivViewPresentContract.Mview) {
         mainView = mView
+        subscribeUsersEvents()
     }
 
     override fun onDestroy() {
@@ -141,7 +145,6 @@ class MainActivityViewPresenter(val context: Context) : IMainActivViewPresentCon
     }
 
     override fun loadHomeView() {
-
         val option = MOption<String, String, Any>("isAccountLocal", value = 1)
         App.getManagerDB(context)?.getListPersons(where = arrayListOf(option))?.let {
             if (it.isNotEmpty())
@@ -154,22 +157,35 @@ class MainActivityViewPresenter(val context: Context) : IMainActivViewPresentCon
     }
 
 
-    //IComunication implement
+    //
+    //IComunication implement using firebase
     //
     override fun registerPerson(
         person: Person,
         function: (success: Boolean, error: String?) -> Unit
     ) {
-        val strJSON = WebConnect.contructMessage("sampletask", "any content")
+        // FirebaseMessaging.getInstance().deleteToken()
+        val sharedferences = context.getSharedPreferences("token", AppCompatActivity.MODE_PRIVATE)
+        val token = sharedferences.getString("token", null)
+        token?.let {
+            val listMessage = arrayListOf(Pair("token", token))
+            listMessage.add(Pair("globalId", person.globalId))
+            listMessage.add(Pair("fullName", person.fullName))
+            listMessage.add(Pair("occupation", person.occupation))
+            listMessage.add(Pair("typeProfile", person.typeProfile))
+            val strJSON =
+                WebConnect.contructMessage("token", "register", App.topicNewUser, listMessage)
 
-        Thread(Runnable {
-            WebConnect.connect(strJSON, function)
-        }).start()
+            Thread(Runnable {
+                WebConnect.connect(strJSON, function)
+            }).start()
+        }
     }
 
     override fun login(gsiTaskDescription: GSITaskDescription) {
-        TODO("Not yet implemented")
+
     }
+
 
     override fun receiveTask(gsiTaskDescription: GSITaskDescription) {
         mainView?.notifyEvent(gsiTaskDescription)
@@ -180,7 +196,8 @@ class MainActivityViewPresenter(val context: Context) : IMainActivViewPresentCon
         person: Person,
         function: (success: Boolean, error: String?) -> Unit
     ) {
-        val strJSON = WebConnect.contructMessage("sampletask", "any content")
+        val strJSON =
+            WebConnect.contructMessage("sampletask", "any content", App.topicTask, arrayListOf())
 
         Thread(Runnable {
             WebConnect.connect(strJSON, function)
@@ -193,12 +210,22 @@ class MainActivityViewPresenter(val context: Context) : IMainActivViewPresentCon
         users: ArrayList<Person>,
         function: (success: Boolean, error: String?) -> Unit
     ) {
-        val strJSON = WebConnect.contructMessage("sampletask", "any content")
+        val strJSON =
+            WebConnect.contructMessage("sampletask", "any content", App.topicTask, arrayListOf())
 
         Thread(Runnable {
             WebConnect.connect(strJSON, function)
         }).start()
 
+    }
+
+    override fun subscribeUsersEvents() {
+        WebConnect.subscribe(App.topicNewUser) {
+            //do something
+        }
+        WebConnect.subscribe(App.topicTask) {
+            //do something
+        }
     }
 
 

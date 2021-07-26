@@ -6,6 +6,7 @@ interface IViewAddProfileContract {
 
     interface MView : IBaseView {
         fun onAddProfile(profile: TypeProfile)
+        fun getSender(): IComunication?
     }
 
 

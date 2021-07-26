@@ -24,6 +24,7 @@ interface IComunication {
         function: (success: Boolean, error: String?) -> Unit
     )
 
+   fun subscribeUsersEvents()
     /*
     fun sendNewTaskToTeamManager(gsiTaskDescription: GSITaskDescription , personId: Long)
     fun sendNewTaskToTeamMember(gsiTaskDescription: GSITaskDescription  , personId: Long)

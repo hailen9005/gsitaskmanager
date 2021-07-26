@@ -14,20 +14,20 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import com.gsi.tm.enums.SendState
 import com.gsi.tm.helpers.App.getDBPath
-import com.gsi.tm.models.GSITaskDescription
-import com.gsi.tm.models.MOption
-import com.gsi.tm.models.OperationTaskStatus
-import com.gsi.tm.models.Person
+import com.gsi.tm.models.*
 import java.lang.StringBuilder
 
 class DBManager(context: Context) : SQLiteOpenHelper(context, context.getDBPath(), null, 1) {
-    private val TAB_USER_TASK = "userTask"
+    val TAB_TOKEN = "token_tab"
     val TAB_PERSON: String = "person"
     val TAB_TASK: String = "task"
     val TAB_TASK_STATUS: String = "operationTaskStatus"
 
     private val CREATE_TABLE_PERSON: String =
         "CREATE TABLE IF NOT EXISTS $TAB_PERSON ( id INTEGER PRIMARY KEY AUTOINCREMENT , fullName TEXT, occupation TEXT, globalId TEXT, typeProfile Text, isAccountLocal Int )"
+
+    private val CREATE_TABLE_TOKEN: String =
+        "CREATE TABLE IF NOT EXISTS $TAB_TOKEN ( id INTEGER PRIMARY KEY AUTOINCREMENT , token TEXT, userGlobalId TEXT )"
 
     private val CREATE_TABLE_TASK_STATUS: String =
         "CREATE TABLE IF NOT EXISTs $TAB_TASK_STATUS ( id INTEGER PRIMARY KEY AUTOINCREMENT, stateSend TEXT, date Long , idTask, FOREIGN KEY(idTask) REFERENCES $TAB_TASK(id) )"
@@ -45,6 +45,8 @@ class DBManager(context: Context) : SQLiteOpenHelper(context, context.getDBPath(
 
     override fun onCreate(db: SQLiteDatabase?) {
         dbm = db!!
+
+        dbm.execSQL(CREATE_TABLE_TOKEN)
         dbm.execSQL(CREATE_TABLE_PERSON)
         dbm.execSQL(CREATE_TABLE_TASK)
         dbm.execSQL(CREATE_TABLE_TASK_STATUS)
@@ -83,6 +85,13 @@ class DBManager(context: Context) : SQLiteOpenHelper(context, context.getDBPath(
                 cValues.put("stateSend", opTaskStatus.sendState.name)
                 cValues.put("date", opTaskStatus.date)
                 cValues.put("idTask", opTaskStatus.idTask)
+            }
+            TokenDevices::class -> {
+                val tokenDevice = el as TokenDevices
+                columns = "stateSend, date"
+                currentTab = TAB_TOKEN
+                cValues.put("token", tokenDevice.userGlobalId)
+                cValues.put("userGlobalId", tokenDevice.userGlobalId)
             }
 
             GSITaskDescription::class -> {
@@ -173,6 +182,29 @@ class DBManager(context: Context) : SQLiteOpenHelper(context, context.getDBPath(
         }
         cursor?.close()
         return personList
+    }
+
+    /**
+     * get List Tokens
+     */
+    fun getListTokes(where: ArrayList<MOption<String, String, Any>>? = null): ArrayList<TokenDevices> {
+        val tokenDevList = arrayListOf<TokenDevices>()
+        dbm = this.readableDatabase
+        val WHERE_CLAUSE = getWhereConditions(where)
+
+        val cursor =
+            dbm.rawQuery("select * FROM $TAB_TOKEN $WHERE_CLAUSE ORDER BY id ASC", null)
+        cursor?.let {
+            while (cursor.moveToNext()) {
+                val id = it.getLong(0)
+                val token = it.getString(1)
+                val userGlobalId = it.getString(3)
+                val tokenDev = TokenDevices(id, userGlobalId = userGlobalId, token = token)
+                tokenDevList.add(tokenDev)
+            }
+        }
+        cursor?.close()
+        return tokenDevList
     }
 
     private fun getWhereConditions(where: ArrayList<MOption<String, String, Any>>?): String {
