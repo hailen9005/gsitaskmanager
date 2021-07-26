@@ -9,13 +9,19 @@ import com.gsi.tm.models.Person
 
 interface IComunication {
 
-    fun registerPerson(person: Person)
+    fun registerPerson(person: Person, function: (success: Boolean, error: String?) -> Unit)
     fun login(gsiTaskDescription: GSITaskDescription)
     fun receiveTask(gsiTaskDescription: GSITaskDescription)
     fun sendNewTask(
         gsiTaskDescription: GSITaskDescription,
         person: Person,
-        fn: (success: Boolean, error: String?) -> Unit
+        function: (success: Boolean, error: String?) -> Unit
+    )
+
+    fun sendNewTasks(
+        listTaskDescriptionGSI: java.util.ArrayList<GSITaskDescription>,
+        users: ArrayList<Person>,
+        function: (success: Boolean, error: String?) -> Unit
     )
 
     /*

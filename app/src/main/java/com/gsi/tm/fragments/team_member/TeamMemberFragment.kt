@@ -1,9 +1,14 @@
-package com.gsi.tm.fragments
+/*
+ * Copyright (c) Desarrollado por Hailen Baez,
+ */
+
+package com.gsi.tm.fragments.team_member
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.gsi.tm.fragments.ListTaskFragment
 import com.gsi.tm.interfaces.IOnItemAdapter
 import com.gsi.tm.models.GSITaskDescription
 

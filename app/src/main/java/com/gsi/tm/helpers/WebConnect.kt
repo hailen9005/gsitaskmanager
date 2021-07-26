@@ -9,7 +9,9 @@ import java.net.URL
 object WebConnect {
 
     val TAG = "GSI-WebConnect"
-    fun connect(strJSON: String) {
+    fun connect(strJSON: String, function: (success: Boolean, error: String?) -> Unit) {
+        var result = false
+        var error = ""
         try {
             val url = URL(App.FIREBASE_SERVER)
             val urlConex = url.openConnection()
@@ -29,13 +31,17 @@ object WebConnect {
 
             if (httpURLConnection.responseCode == 200) {
                 Log.e(TAG, "Success notification sent")
+                result = true
             } else {
+                error = "Error Response" + httpURLConnection.responseCode
                 Log.e(TAG, "Error Response" + httpURLConnection.responseCode)
             }
         } catch (ex: Exception) {
+            error = "Error Exception ${ex.message}"
             Log.e(TAG, "Exception ${ex.message}")
 
         } finally {
+            function.invoke(result, error)
         }
     }
 

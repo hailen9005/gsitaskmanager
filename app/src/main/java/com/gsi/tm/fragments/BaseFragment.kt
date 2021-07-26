@@ -139,6 +139,10 @@ open class BaseFragment : Fragment(), INavigate {
         }
     }
 
+    override var lastFragment: KClass<*>?
+        get() = this::class
+        set(value) {}
+
     /**
      * null param execute onbackPressed on Activity
      */

@@ -38,7 +38,7 @@ class AddProfileViewPresenterFragment(val context: Context) : IViewAddProfileCon
             )
             else -> null
         }
-
+        App.profileUser = person
         person?.let {
             App.getManagerDB(context)?.insert(person)
         }

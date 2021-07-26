@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import android.widget.TabHost.TabSpec
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.gsi.tm.R
 import com.gsi.tm.enums.ListOption
@@ -22,11 +23,12 @@ import layout.AccountSelectFragment
 open class ListTaskFragment : BaseFragment(), IListTaskContract.MView, IOnItemAdapter {
 
     //ui
-    var rootView: View? = null
-    var btnAssignedTasks: ImageButton? = null
-    var btnMyTasks: ImageButton? = null
+    private var rootView: View? = null
+    private var btnAssignedTasks: ImageButton? = null
+    private var btnMyTasks: ImageButton? = null
     lateinit var tabHost: TabHost
     private lateinit var btnAdd: ImageButton
+    private lateinit var clyTools: ConstraintLayout
 
     // properties
     var presenter: IListTaskContract.Presenter? = null
@@ -39,12 +41,79 @@ open class ListTaskFragment : BaseFragment(), IListTaskContract.MView, IOnItemAd
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         rootView = inflater.inflate(R.layout.main_panel_list_task, null)
         btnAdd = rootView!!.findViewById(R.id.btn_add_task)!!
         btnMyTasks = rootView!!.findViewById(R.id.btn_see_personal_task)!!
         btnAssignedTasks = rootView!!.findViewById(R.id.btn_see_group_task)!!
         tabHost = rootView!!.findViewById(R.id.tabhost)
+        clyTools = rootView!!.findViewById(R.id.cly_tools)
+
+        //functions
+        enableDisableToolsOptions()
+        configureTabHost()
+        setActionsButtons()
+        return rootView!!
+    }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        context?.let {
+            presenter = ListTaskFragmentViewPresenter(it)
+            presenter?.onCreateView(this)
+            recyclerView = it.createRecyclerView()
+            val lyContainer = rootView?.findViewById<LinearLayout>(R.id.ly_container_1)
+            lyContainer?.addView(recyclerView)
+            App.profileUser?.let { person ->
+                presenter?.listTask(ListOption.All, person, 0)
+            }
+        }
+    }
+
+
+    /**
+     *
+     */
+    override fun onDestroyView() {
+        super.onDestroyView()
+        presenter?.onDestroy()
+    }
+
+    /***
+     * setActionsButtons Add See task
+     */
+    private fun setActionsButtons() {
+        btnAdd.setOnClickListener {
+            mNavigator?.goTo(AddTaskFragment::class, null)
+        }
+
+        btnMyTasks?.setOnClickListener {
+            seeOnlyMyTask = false
+            onTabSelected(ListOption.Incomplete, tabHost.currentTab)
+        }
+
+        btnAssignedTasks?.setOnClickListener {
+            seeOnlyMyTask = true
+            onTabSelected(ListOption.Incomplete, tabHost.currentTab)
+        }
+    }
+
+    /**
+     * enable Disable Tools Options
+     */
+    private fun enableDisableToolsOptions() {
+        App.profileUser?.let { person ->
+            if (person is TeamMember) {
+                clyTools.visibility = View.GONE
+            }
+        }
+    }
+
+
+    /**
+     * configure TabHost to present content from Data base
+     */
+    private fun configureTabHost() {
         tabHost.setup()
 
         var spec: TabSpec = tabHost.newTabSpec("tag1")
@@ -84,47 +153,8 @@ open class ListTaskFragment : BaseFragment(), IListTaskContract.MView, IOnItemAd
             onTabSelected(ListOption.Incomplete, 2)
         }
 
-        btnAdd.setOnClickListener {
-            mNavigator?.goTo(AddTaskFragment::class, null)
-        }
-
-        btnMyTasks?.setOnClickListener {
-            seeOnlyMyTask = false
-            onTabSelected(ListOption.Incomplete, tabHost.currentTab)
-        }
-
-        btnAssignedTasks?.setOnClickListener {
-            seeOnlyMyTask = true
-            onTabSelected(ListOption.Incomplete, tabHost.currentTab)
-        }
-
-        App.profileUser?.let { person ->
-            if (person !is TeamManager)
-                (btnAssignedTasks?.parent as? View)?.visibility = View.GONE
-        }
-
-        return rootView!!
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        context?.let {
-            presenter = ListTaskFragmentViewPresenter(it)
-            presenter?.onCreateView(this)
-            recyclerView = it.createRecyclerView()
-            val lyContainer = rootView?.findViewById<LinearLayout>(R.id.ly_container_1)
-            lyContainer?.addView(recyclerView)
-            App.profileUser?.let { person ->
-                presenter?.listTask(ListOption.All, person, 0)
-            }
-        }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        presenter?.onDestroy()
-
-    }
 
     fun onTabSelected(listingOption: ListOption, pos: Int) {
         App.profileUser?.let { person ->
@@ -168,11 +198,13 @@ open class ListTaskFragment : BaseFragment(), IListTaskContract.MView, IOnItemAd
         val gsiTaskDescription = entity as GSITaskDescription
         val dateStr = App.getDateFromMillis(gsiTaskDescription.date)
         val state = gsiTaskDescription.stateTask
+        val globalId = gsiTaskDescription.date
         val drawableByState = context?.getDrawableByState(state)
         // imvProfile = this.itemView.findViewById(R.id.imv_profile_item_task)
         itemView.findViewById<TextView>(R.id.tv_title).text = gsiTaskDescription.tittle
         itemView.findViewById<TextView>(R.id.tv_date_item_task).text = dateStr
         itemView.findViewById<TextView>(R.id.tv_state).text = state.name
+        itemView.findViewById<TextView>(R.id.tv_task_id).text = "$globalId"
         itemView.findViewById<ImageView>(R.id.imv_state).setImageDrawable(drawableByState)
         itemView.setOnClickListener {
             onSelectectedItem(gsiTaskDescription)

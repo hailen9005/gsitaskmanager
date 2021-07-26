@@ -2,7 +2,7 @@
  * Copyright (c) Desarrollado por Hailen Baez,
  */
 
-package com.gsi.tm.fragments
+package com.gsi.tm.fragments.manager
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,8 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.gsi.tm.R
 import com.gsi.tm.enums.StateTask
+import com.gsi.tm.fragments.BaseFragment
 import com.gsi.tm.interfaces.IEditTeamManagerContract
-import com.gsi.tm.interfaces.IEditTeamMemberContract
 import kotlin.reflect.KClass
 
 class EditTaskManagerFragment : BaseFragment(), IEditTeamManagerContract.MView {
@@ -37,6 +37,10 @@ class EditTaskManagerFragment : BaseFragment(), IEditTeamManagerContract.MView {
 
     override fun updateState(stateTask: StateTask) {
 
+    }
+
+    override fun onAddTask(result: Boolean, error: String?) {
+        goBack()
     }
 
     override fun goBack() {

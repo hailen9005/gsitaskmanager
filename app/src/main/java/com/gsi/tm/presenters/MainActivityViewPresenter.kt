@@ -4,9 +4,14 @@ import android.content.Context
 import android.util.Log
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
-import com.google.firebase.messaging.FirebaseMessaging
 import com.gsi.tm.enums.TypeProfile
 import com.gsi.tm.fragments.*
+import com.gsi.tm.fragments.manager.EditTaskManagerFragment
+import com.gsi.tm.fragments.manager.ManagerFragment
+import com.gsi.tm.fragments.team_manager.AssignTaskTeamManagerFragment
+import com.gsi.tm.fragments.team_manager.TeamManagerFragment
+import com.gsi.tm.fragments.team_member.EditTaskTeamMemberFragment
+import com.gsi.tm.fragments.team_member.TeamMemberFragment
 import com.gsi.tm.helpers.App
 import com.gsi.tm.helpers.WebConnect
 import com.gsi.tm.interfaces.IMainActivViewPresentContract
@@ -18,7 +23,7 @@ import com.gsi.tm.models.Person
 import layout.ChooseProfileFragment
 import layout.AccountSelectFragment
 import java.lang.Exception
-import java.util.ArrayList
+import kotlin.collections.ArrayList
 import kotlin.reflect.KClass
 
 class MainActivityViewPresenter(val context: Context) : IMainActivViewPresentContract.Presenter,
@@ -45,6 +50,9 @@ class MainActivityViewPresenter(val context: Context) : IMainActivViewPresentCon
 
     override fun goTo(fragmentClazz: KClass<*>?, param: Any?) {
         fragmentClazz?.let {
+            currentFragment?.let { currentFrg ->
+                lastFragment = currentFrg::class
+            }
             val transaction = this.supportFragmentManager?.beginTransaction()
             var enableBarStatus = false
             containerId?.let { id ->
@@ -55,10 +63,7 @@ class MainActivityViewPresenter(val context: Context) : IMainActivViewPresentCon
                     AddProfileFragment::class -> {
                         mainView?.enableBarStatus(false)
                         currentFragment = AddProfileFragment()
-                        currentFragment?.arguments =
-                            bundleOf(
-                                Pair("typeProfile", param as TypeProfile)
-                            )
+                        currentFragment?.arguments = bundleOf(Pair("typeProfile", param))
                     }
                     ManagerFragment::class -> {
                         enableBarStatus = true
@@ -79,26 +84,22 @@ class MainActivityViewPresenter(val context: Context) : IMainActivViewPresentCon
                     EditTaskTeamMemberFragment::class -> {
                         enableBarStatus = true
                         currentFragment = EditTaskTeamMemberFragment()
-                        currentFragment?.arguments =
-                            bundleOf(
-                                Pair("idTask", param as Long)
-                            )
+                        currentFragment?.arguments = bundleOf(Pair("idTask", param))
                     }
                     EditTaskManagerFragment::class -> {
                         enableBarStatus = true
                         currentFragment = EditTaskManagerFragment()
-                        currentFragment?.arguments =
-                            bundleOf(
-                                Pair("idTask", param as Long)
-                            )
+                        currentFragment?.arguments = bundleOf(Pair("idTask", param))
                     }
-                    EditTaskTeamManagerFragment::class -> {
+                    AssignTaskTeamManagerFragment::class -> {
                         enableBarStatus = true
-                        currentFragment = EditTaskTeamManagerFragment()
-                        currentFragment?.arguments =
-                            bundleOf(
-                                Pair("idTask", param as Long)
-                            )
+                        currentFragment = AssignTaskTeamManagerFragment()
+                        currentFragment?.arguments = bundleOf(Pair("idTask", param))
+                    }
+                    SeeTaskDetailFragment::class -> {
+                        enableBarStatus = true
+                        currentFragment = SeeTaskDetailFragment()
+                        currentFragment?.arguments = bundleOf(Pair("idTask", param))
                     }
                     AccountSelectFragment::class -> {
                         currentFragment = AccountSelectFragment()
@@ -106,7 +107,7 @@ class MainActivityViewPresenter(val context: Context) : IMainActivViewPresentCon
                     }
 
                     else -> {
-                        throw(Exception("********Not declared Fragment into changer $fragmentClazz *********"))
+                        throw(Exception("********Not declared Fragment $fragmentClazz into ${this::class.simpleName}  *********"))
                     }
                 }
 
@@ -121,6 +122,15 @@ class MainActivityViewPresenter(val context: Context) : IMainActivViewPresentCon
             mainView?.exit()
         }
     }
+
+    private var _mlastFragment: KClass<*> = AccountSelectFragment::class
+    override var lastFragment: KClass<*>?
+        get() {
+            return _mlastFragment
+        }
+        set(value) {
+            _mlastFragment = value ?: AccountSelectFragment::class
+        }
 
     override fun goBack() {
         currentFragment?.goBack()
@@ -146,11 +156,14 @@ class MainActivityViewPresenter(val context: Context) : IMainActivViewPresentCon
 
     //IComunication implement
     //
-    override fun registerPerson(person: Person) {
+    override fun registerPerson(
+        person: Person,
+        function: (success: Boolean, error: String?) -> Unit
+    ) {
         val strJSON = WebConnect.contructMessage("sampletask", "any content")
 
         Thread(Runnable {
-            WebConnect.connect(strJSON)
+            WebConnect.connect(strJSON, function)
         }).start()
     }
 
@@ -165,18 +178,28 @@ class MainActivityViewPresenter(val context: Context) : IMainActivViewPresentCon
     override fun sendNewTask(
         gsiTaskDescription: GSITaskDescription,
         person: Person,
-        fn: (success: Boolean, error: String?) -> Unit
+        function: (success: Boolean, error: String?) -> Unit
     ) {
         val strJSON = WebConnect.contructMessage("sampletask", "any content")
 
         Thread(Runnable {
-            WebConnect.connect(strJSON)
+            WebConnect.connect(strJSON, function)
         }).start()
 
     }
 
+    override fun sendNewTasks(
+        listTaskDescriptionGSI: ArrayList<GSITaskDescription>,
+        users: ArrayList<Person>,
+        function: (success: Boolean, error: String?) -> Unit
+    ) {
+        val strJSON = WebConnect.contructMessage("sampletask", "any content")
 
+        Thread(Runnable {
+            WebConnect.connect(strJSON, function)
+        }).start()
 
+    }
 
 
 }

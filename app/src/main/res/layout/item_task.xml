@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="65dp"
         android:layout_marginTop="7dp"
-        android:text="Created:"
+        android:text="Task Id:"
         android:textSize="12sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -73,11 +73,11 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_title" />
 
     <TextView
-        android:id="@+id/textView6"
+        android:id="@+id/tv_task_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
-        android:text="7/8/1970 pm"
+        android:text="1123546567567679"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/textView8"

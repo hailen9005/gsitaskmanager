@@ -14,9 +14,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.gsi.tm.R
 import com.gsi.tm.enums.StateTask
-import com.gsi.tm.fragments.ManagerFragment
-import com.gsi.tm.fragments.TeamManagerFragment
-import com.gsi.tm.fragments.TeamMemberFragment
+import com.gsi.tm.fragments.manager.ManagerFragment
+import com.gsi.tm.fragments.team_manager.TeamManagerFragment
+import com.gsi.tm.fragments.team_member.TeamMemberFragment
 import com.gsi.tm.interfaces.IOnItemAdapter
 import com.gsi.tm.models.Manager
 import com.gsi.tm.models.Person
@@ -64,7 +64,7 @@ object App {
         return (!(this.text.toString().contains(Regex("\\W"))))
     }
 
-    fun getDateFromMillis(dateMillis: Long): String {
+    fun getDateFromMillis(dateMillis: Long, withHour: Boolean = false): String {
         val caleder = Calendar.getInstance()
         caleder.timeInMillis = dateMillis
         val d = caleder[Calendar.DAY_OF_MONTH]
@@ -74,7 +74,8 @@ object App {
         val min = caleder[Calendar.MINUTE]
         val apm = caleder[Calendar.AM_PM]
 
-        val dateStr = "$d/$m/$y $h:$min $apm"
+        val hour = if (withHour) "$h:$min $apm" else ""
+        val dateStr = "$d/$m/$y $hour"
         return dateStr
     }
 

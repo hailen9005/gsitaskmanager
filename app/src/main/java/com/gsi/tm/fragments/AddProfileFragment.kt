@@ -10,6 +10,9 @@ import android.widget.EditText
 import android.widget.Spinner
 import com.gsi.tm.R
 import com.gsi.tm.enums.TypeProfile
+import com.gsi.tm.fragments.manager.ManagerFragment
+import com.gsi.tm.fragments.team_manager.TeamManagerFragment
+import com.gsi.tm.fragments.team_member.TeamMemberFragment
 import com.gsi.tm.helpers.App.requireLength
 import com.gsi.tm.helpers.App.showPopud
 import com.gsi.tm.interfaces.IViewAddProfileContract

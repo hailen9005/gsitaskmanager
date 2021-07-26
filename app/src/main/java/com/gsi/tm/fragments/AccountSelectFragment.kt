@@ -9,6 +9,9 @@ import android.widget.*
 import com.gsi.tm.R
 import com.gsi.tm.enums.TypeProfile
 import com.gsi.tm.fragments.*
+import com.gsi.tm.fragments.manager.ManagerFragment
+import com.gsi.tm.fragments.team_manager.TeamManagerFragment
+import com.gsi.tm.fragments.team_member.TeamMemberFragment
 import com.gsi.tm.helpers.App
 import com.gsi.tm.helpers.App.createRecyclerView
 import com.gsi.tm.helpers.App.setAdaterToRecyclerView
@@ -16,7 +19,6 @@ import com.gsi.tm.interfaces.IAccountSelectContract
 import com.gsi.tm.interfaces.IOnItemAdapter
 import com.gsi.tm.models.*
 import com.gsi.tm.presenters.AccountSelectFragmentPresenter
-import java.util.ArrayList
 import kotlin.reflect.KClass
 
 class AccountSelectFragment : BaseFragment(), IAccountSelectContract.MView, IOnItemAdapter {

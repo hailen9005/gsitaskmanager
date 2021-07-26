@@ -79,9 +79,10 @@ class DBManager(context: Context) : SQLiteOpenHelper(context, context.getDBPath(
             OperationTaskStatus::class -> {
                 val opTaskStatus: OperationTaskStatus = el as OperationTaskStatus
                 columns = "stateSend, date"
-                currentTab = TAB_PERSON
+                currentTab = TAB_TASK_STATUS
                 cValues.put("stateSend", opTaskStatus.sendState.name)
                 cValues.put("date", opTaskStatus.date)
+                cValues.put("idTask", opTaskStatus.idTask)
             }
 
             GSITaskDescription::class -> {

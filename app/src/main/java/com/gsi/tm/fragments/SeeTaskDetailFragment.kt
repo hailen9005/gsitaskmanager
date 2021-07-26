@@ -17,14 +17,17 @@ import com.gsi.tm.helpers.App
 import com.gsi.tm.helpers.App.getDrawableByState
 import com.gsi.tm.helpers.App.showPopud
 import com.gsi.tm.interfaces.IEditTeamMemberContract
+import com.gsi.tm.interfaces.ISeeDetailContract
 import com.gsi.tm.presenters.EditTeamMemberVPresenter
+import com.gsi.tm.presenters.SeeDetailVPresenter
+import layout.AccountSelectFragment
 import kotlin.reflect.KClass
 
-class EditTaskTeamMemberFragment : BaseFragment(), IEditTeamMemberContract.MView {
+class SeeTaskDetailFragment : BaseFragment(), ISeeDetailContract.MView {
     var rootView: View? = null
     var imvState: ImageView? = null
     var tvState: TextView? = null
-    var presenter: IEditTeamMemberContract.Presenter? = null
+    var presenter: ISeeDetailContract.Presenter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,21 +35,20 @@ class EditTaskTeamMemberFragment : BaseFragment(), IEditTeamMemberContract.MView
         savedInstanceState: Bundle?
     ): View? {
 
-        rootView = layoutInflater.inflate(R.layout.view_update_task, null)
+        rootView = layoutInflater.inflate(R.layout.see_task_detail_task, null)
         //init
         val tvTitle = rootView?.findViewById<TextView>(R.id.tv_task_title)
         val tvDescription = rootView?.findViewById<TextView>(R.id.tv_task_description)
         val tvTaskType = rootView?.findViewById<TextView>(R.id.tv_task_type)
         val tvTaskProject = rootView?.findViewById<TextView>(R.id.tv_task_project)
         val tvDate = rootView?.findViewById<TextView>(R.id.tv_date)
-        val btnInit = rootView?.findViewById<Button>(R.id.btn_init_task)
-        val btnFinish = rootView?.findViewById<Button>(R.id.btn_finish_task)
-        val btnChange = rootView?.findViewById<Button>(R.id.btn_change_task)
+        val btnClose = rootView?.findViewById<Button>(R.id.btn_close)
+        val btnDelete = rootView?.findViewById<Button>(R.id.btn_delete_task)
         imvState = rootView?.findViewById<ImageView>(R.id.imv_update_state)
         tvState = rootView?.findViewById<TextView>(R.id.tv_state)
 
         context?.let { cntx ->
-            presenter = EditTeamMemberVPresenter(cntx)
+            presenter = SeeDetailVPresenter(cntx)
             arguments?.get("idTask")?.let { idTask ->
                 val gsiTask = presenter?.getTask(idTask as Long)
                 gsiTask?.let { _gsiTask ->
@@ -59,34 +61,18 @@ class EditTaskTeamMemberFragment : BaseFragment(), IEditTeamMemberContract.MView
                     imvState?.setImageDrawable(cntx.getDrawableByState(gsiTask.stateTask))
                     tvState?.text = gsiTask.state
 
-                    btnInit?.setOnClickListener {
-                        taskGSI.stateTask = StateTask.InProgress
-                        presenter?.updateState(taskGSI)
-                    }
-                    btnFinish?.setOnClickListener {
-                        taskGSI.stateTask = StateTask.Closed
-                        presenter?.updateState(taskGSI)
-                    }
-                    btnChange?.setOnClickListener {
-                        // throw (Exception(" need implement change for task  "))
-                        //taskGSI.stateTask = StateTask.OffTime
-                        //database.updateStateTask( taskGSI)
 
-                        popupWindow = context?.showPopud(
-                            containerPopupView,
-                            rootView!!,
-                            getSizePopudHeigth400dp(cntx),
-                            Point(0, 0),
-                            Gravity.CENTER
-                        )
-                        setPopudMessages("Need implement this ")
-
+                    btnClose?.setOnClickListener {
+                        goBack()
                     }
-                } ?: kotlin.run { showTaskNotFound() }
+                    btnDelete?.setOnClickListener {
+                        presenter?.deleteTask(gsiTask)
+                    }
+
+
+                }
             } ?: kotlin.run { showTaskNotFound() }
-        }
-
-
+        } ?: kotlin.run { showTaskNotFound() }
         return rootView
     }
 
@@ -115,21 +101,24 @@ class EditTaskTeamMemberFragment : BaseFragment(), IEditTeamMemberContract.MView
     }
 
 
-    override fun updateState(stateTask: StateTask) {
-        context?.let { cntx ->
-            imvState?.setImageDrawable(cntx.getDrawableByState(stateTask))
-            tvState?.text = stateTask.name
-        }
-
-        this.goBack()
-    }
-
     override fun goBack() {
-        mNavigator?.goTo(TeamMemberFragment::class, null)
+        mNavigator?.goTo(mNavigator?.lastFragment, null)
     }
 
     override fun goTo(fragmentClazz: KClass<*>?, param: Any?) {
         mNavigator?.goTo(fragmentClazz, null)
+    }
+
+    override fun onDelete() {
+        /*popupWindow = context?.showPopud(
+            containerPopupView,
+            rootView!!,
+            getSizePopudHeigth400dp(requireContext()),
+            Point(0, 0),
+            Gravity.CENTER
+        )
+        setPopudMessages(resources.getString(R.string.delete_from_db))*/
+        goBack()
     }
 
 }

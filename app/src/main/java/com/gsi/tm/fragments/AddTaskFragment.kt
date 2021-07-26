@@ -6,18 +6,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.gsi.tm.R
+import com.gsi.tm.fragments.manager.ManagerFragment
+import com.gsi.tm.fragments.team_manager.TeamManagerFragment
+import com.gsi.tm.fragments.team_member.TeamMemberFragment
 import com.gsi.tm.helpers.App
 import com.gsi.tm.helpers.App.createRecyclerView
-import com.gsi.tm.helpers.App.setAdaterToRecyclerView
 import com.gsi.tm.helpers.App.showPopud
 import com.gsi.tm.interfaces.IAddTaskViewPresentContract
 import com.gsi.tm.interfaces.IOnItemAdapter
-import com.gsi.tm.models.GSITaskDescription
-import com.gsi.tm.models.Person
+import com.gsi.tm.models.*
 import com.gsi.tm.presenters.AddTaskViewFragmentPresenter
+import layout.AccountSelectFragment
 import kotlin.reflect.KClass
 
 class AddTaskFragment : BaseFragment(), IAddTaskViewPresentContract.MView, IOnItemAdapter {
@@ -133,10 +134,19 @@ class AddTaskFragment : BaseFragment(), IAddTaskViewPresentContract.MView, IOnIt
 
     override fun onDestroyView() {
         super.onDestroyView()
+        presenter?.onDestroy()
     }
 
     override fun goBack() {
-        mNavigator?.goTo(ManagerFragment::class, null)
+        App.profileUser?.let { user ->
+            val targetFragment = when (user) {
+                is Manager -> ManagerFragment::class
+                is TeamManager -> TeamManagerFragment::class
+                is TeamMember -> TeamMemberFragment::class
+                else -> AccountSelectFragment::class
+            }
+            mNavigator?.goTo(targetFragment, null)
+        }
     }
 
     override fun goTo(fragmentClazz: KClass<*>?, param: Any?) {

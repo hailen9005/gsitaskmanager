@@ -5,6 +5,61 @@
     android:layout_height="match_parent"
     android:background="#ffffff">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cly_tools"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/draw_edt_form"
+        android:paddingStart="1dp"
+        android:paddingEnd="1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <ImageButton
+            android:id="@+id/btn_see_group_task"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/state_draw_btn4"
+            android:src="@drawable/ic_baseline_call_received_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_see_personal_task"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/btn_see_personal_task"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/state_draw_btn4"
+            android:src="@drawable/ic_baseline_call_missed_outgoing_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_add_task"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/btn_add_task"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/state_draw_btn4"
+            android:padding="0dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_baseline_add_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.49" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <TabHost
         android:id="@+id/tabhost"
         android:layout_width="0dp"
@@ -13,7 +68,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cly_tools"
         app:layout_constraintVertical_bias="0.0">
 
         <LinearLayout
@@ -113,54 +168,4 @@
             </FrameLayout>
         </LinearLayout>
     </TabHost>
-
-
-    <LinearLayout
-        android:id="@+id/btn_change_task"
-        android:layout_width="50dp"
-        android:layout_height="100dp"
-        android:layout_marginEnd="25dp"
-        android:layout_marginBottom="150dp"
-        android:background="@drawable/state_draw_btn2"
-        android:orientation="vertical"
-        android:src="@drawable/ic_baseline_add_24"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0">
-
-        <ImageButton
-            android:id="@+id/btn_see_group_task"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@drawable/state_draw_btn4"
-            android:src="@drawable/ic_baseline_group_24" />
-
-        <ImageButton
-            android:id="@+id/btn_see_personal_task"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@drawable/state_draw_btn4"
-            android:src="@drawable/ic_baseline_person_24" />
-    </LinearLayout>
-
-    <ImageButton
-        android:id="@+id/btn_add_task"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginEnd="25dp"
-        android:layout_marginBottom="25dp"
-        android:background="@drawable/state_draw_btn3"
-        android:src="@drawable/ic_baseline_add_24"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

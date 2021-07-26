@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) Desarrollado por Hailen Baez,
+  -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -23,6 +25,7 @@
             android:id="@+id/imageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
             android:src="@drawable/ic_baseline_assignment_ind_24"
             app:layout_constraintBottom_toBottomOf="@+id/textView"
             app:layout_constraintEnd_toStartOf="@+id/textView"
@@ -37,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:text="@string/assign_task"
+            android:text="@string/task_detail"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -45,6 +48,46 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cly_state"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cly_head"
+        app:layout_constraintVertical_bias="0.0">
+
+        <ImageView
+            android:id="@+id/imv_update_state"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginEnd="5dp"
+            android:src="@drawable/draw_undefined_state"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_state"
+            app:layout_constraintEnd_toStartOf="@+id/tv_state"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tv_state" />
+
+
+        <TextView
+            android:id="@+id/tv_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="@string/state_undefined"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <!--   middle elements-->
     <!--   middle elements-->
@@ -58,7 +101,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cly_head">
+        app:layout_constraintTop_toBottomOf="@+id/cly_state">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -66,7 +109,7 @@
             android:orientation="vertical">
 
             <include
-                layout="@layout/form_task_add"
+                layout="@layout/form_update_task"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -86,27 +129,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ly_scrollview">
 
+
         <Button
-            android:id="@+id/btn_cancel"
+            android:id="@+id/btn_delete_task"
             style="@style/btn_style1"
             android:layout_marginEnd="10dp"
             android:background="@drawable/state_draw_btn1"
             android:gravity="center"
-            android:text="@string/cancel"
+            android:text="@string/delete"
             android:textColor="@color/state_color_btn1"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btn_assign_task"
+            app:layout_constraintEnd_toStartOf="@+id/btn_close"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/btn_assign_task"
+            android:id="@+id/btn_close"
             style="@style/btn_style1"
             android:layout_marginEnd="15dp"
             android:background="@drawable/state_draw_btn1"
             android:gravity="center"
-            android:text="@string/assign"
+            android:text="@string/close"
             android:textColor="@color/state_color_btn1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
